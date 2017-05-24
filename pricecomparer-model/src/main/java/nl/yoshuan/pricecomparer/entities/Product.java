@@ -21,8 +21,9 @@ public class Product {
     
     @Column(name = "brand", nullable = false)
     private String brand;
-    
-    @ManyToOne(cascade = CascadeType.PERSIST)
+
+    // Because I already insert the Category manually
+    @ManyToOne()
     @JoinColumn(name = "category_id", nullable = false, updatable = false)
     private Category category;
     

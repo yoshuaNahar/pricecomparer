@@ -16,7 +16,6 @@ public class DaoTestSetup {
     protected void initializeTestDB() {
         emf = Persistence.createEntityManagerFactory("nl.yoshuan.persistance-unit");
         em = emf.createEntityManager();
-
         dbCommandExecutor = new DbCommandTransactionalExecutor(em);
     }
 

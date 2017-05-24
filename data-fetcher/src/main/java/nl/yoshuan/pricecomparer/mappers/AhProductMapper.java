@@ -9,22 +9,28 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static nl.yoshuan.pricecomparer.entities.ProductVariables.Supermarket.AH;
+
 public final class AhProductMapper {
 
     private AhProductMapper() {}
 
-    public static Product mapAhProductToDbProduct(AhProduct ahProduct) {
+    public static AhProduct mapAhProductToDbProduct(AhProduct ahProduct) {
         Category ahCategory = new Category(ahProduct.getCategoryName(), null);
+
+        if (ahProduct.getDiscount() == null) {
+            ahProduct.setDiscount(new AhProduct.Discount(null));
+        }
 
         List<ProductVariables> ahProductVariables = new ArrayList<>();
         ahProductVariables.add(
                 new ProductVariables(ahProduct.getProductSrc()
                         , ahProduct.getImageSrc()
-                        , Integer.parseInt(ahProduct.getPriceLabel().getPriceNow())
-                        , Integer.parseInt(ahProduct.getPriceLabel().getPriceNow())
+                        , (int) (Double.parseDouble(ahProduct.getPriceLabel().getPriceNow()) * 100)
+                        , (int) (Double.parseDouble(ahProduct.getPriceLabel().getPriceWas()) * 100)
                         , ahProduct.getDiscount().getLabel()
                         , ahProduct.getDiscountImageSrc()
-                        , "AH"
+                        , AH
                         , ahProduct.getPropertyIcons().toString()
                         , new Date()));
 
@@ -32,12 +38,18 @@ public final class AhProductMapper {
                 new Product(ahProduct.getName()
                         , ahProduct.getUnitSize()
                         , ahProduct.getBrandName()
-                        , ahCategory
-                        , ahProductVariables);
+                        , ahCategory); // dont add the productVariable,
+        // You will get a TransientPropertyValueException, because you are trying to
+        // persist an object that has a reference to a transient object (productVariable)
+        // meaning productVariable is not yet persisted.
 
         ahProductVariables.get(0).setProduct(product);
 
-        return product;
+        ahProduct.setCategory(ahCategory);
+        ahProduct.setProduct(product);
+        ahProduct.setProductVariables(ahProductVariables.get(0));
+
+        return ahProduct;
     }
 
 }

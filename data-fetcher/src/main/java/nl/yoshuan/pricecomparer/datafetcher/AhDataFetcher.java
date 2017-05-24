@@ -35,7 +35,7 @@ public class AhDataFetcher {
                 .read("$._embedded.lanes[*]._embedded.items[*]._embedded.product.description");
     }
 
-    public void goToFirstInnerMostPage(String category) {
+    public List<AhProduct> goToFirstInnerMostPage(String category) {
         ReadContext readContext = JsonPath.using(Configuration.defaultConfiguration())
                 .parse(readJsonFromUrl("https://www.ah.nl/service/rest" + category));
 
@@ -59,8 +59,13 @@ public class AhDataFetcher {
             AhDataParser dataParser = new AhDataParser(readContext);
             List<AhProduct> ahProducts = dataParser.getAhProduct();
             ahProducts.forEach(ahProduct -> ahProduct.setFullCategoryName(category));
-            logger.info(ahProducts.toString());
+            if (logger.isDebugEnabled()) { // Im still in development
+                logger.debug(ahProducts.toString());
+            }
+            return ahProducts;
         }
+
+        return null;
     }
 
     public String readJsonFromUrl(String url) {

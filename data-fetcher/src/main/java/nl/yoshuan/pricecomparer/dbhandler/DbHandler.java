@@ -4,10 +4,13 @@ import nl.yoshuan.pricecomparer.dao.CategoryDao;
 import nl.yoshuan.pricecomparer.dao.ProductDao;
 import nl.yoshuan.pricecomparer.dao.ProductVariablesDao;
 import nl.yoshuan.pricecomparer.datafetcher.AhProduct;
+import nl.yoshuan.pricecomparer.entities.Category;
 import nl.yoshuan.pricecomparer.entities.Product;
+import nl.yoshuan.pricecomparer.entities.ProductVariables;
 import nl.yoshuan.pricecomparer.mappers.AhProductMapper;
+import nl.yoshuan.pricecomparer.util.EntityManagerFactory;
 
-import java.util.ArrayList;
+import javax.persistence.EntityManager;
 import java.util.List;
 
 public class DbHandler {
@@ -16,25 +19,41 @@ public class DbHandler {
     private ProductDao productDao;
     private ProductVariablesDao productVariablesDao;
 
+    // For now
+    private EntityManager em = EntityManagerFactory.createEntityManager();
+
     public DbHandler(CategoryDao categoryDao, ProductDao productDao, ProductVariablesDao productVariablesDao) {
         this.categoryDao = categoryDao;
         this.productDao = productDao;
         this.productVariablesDao = productVariablesDao;
+
+        this.categoryDao.setEntityManager(em);
+        this.productDao.setEntityManager(em);
+        this.productVariablesDao.setEntityManager(em);
     }
 
     public void addProducts(List<AhProduct> ahProducts) {
-        List<Product> dbProducts = new ArrayList<>();
+        for (AhProduct ahProduct : ahProducts) {
+            AhProductMapper.mapAhProductToDbProduct(ahProduct);
+        }
 
         for (AhProduct ahProduct : ahProducts) {
-            Product product = AhProductMapper.mapAhProductToDbProduct(ahProduct);
-            dbProducts.add(product);
+            Product product = ahProduct.getProduct();
+            Category category = ahProduct.getCategory();
+            ProductVariables productVariables = ahProduct.getProductVariables();
+
+            em.getTransaction().begin();
+
+            Category managedCategory = categoryDao.persistIfNotExist(category);
+            product.setCategory(managedCategory);
+            productDao.persist(product);
+            productVariablesDao.persist(productVariables);
+
+            em.getTransaction().commit();
+            em.clear();
         }
 
-        for (Product product : dbProducts) {
-            categoryDao.persist(product.getCategory());
-            productDao.persist(product);
-            productVariablesDao.persist(product.getProductsVariables().get(0)); // First and Only
-        }
+        EntityManagerFactory.closeEntityManagerFactory();
     }
 
 }

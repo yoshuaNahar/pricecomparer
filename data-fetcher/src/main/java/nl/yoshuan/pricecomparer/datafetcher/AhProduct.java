@@ -1,6 +1,9 @@
 package nl.yoshuan.pricecomparer.datafetcher;
 
 import com.google.gson.annotations.SerializedName;
+import nl.yoshuan.pricecomparer.entities.Category;
+import nl.yoshuan.pricecomparer.entities.Product;
+import nl.yoshuan.pricecomparer.entities.ProductVariables;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +15,16 @@ public class AhProduct {
     private String brandName;
     private String imageSrc; // set manually
     private String unitSize;
-    private Discount discount; //only the label, not the type name (ah has BONUS for all almost all their labels (route 99, 2 for 0.99, Bonus) Only a few have ONLINE_BONUS.
+    private Discount discount = new Discount(); //only the label, not the type name (ah has BONUS for all almost all their labels (route 99, 2 for 0.99, Bonus) Only a few have ONLINE_BONUS.
     private String discountImageSrc; // not shown in json page for example the 2 VOOR 0.99 image .. Need to add this as last
     private List<String> propertyIcons = new ArrayList<>();
     private String categoryName;
     private String fullCategoryName; // set manually
     private PriceLabel priceLabel = new PriceLabel();
+
+    private Product product;
+    private Category category;
+    private ProductVariables productVariables;
     
     public AhProduct(String productSrc, String brandName, String imageSrc, String unitSize, String name, Discount discount, String discountImageSrc, List<String> propertyIcons, String categoryName, String fullCategoryName, PriceLabel priceLabel) {
         this.productSrc = productSrc;
@@ -120,7 +127,31 @@ public class AhProduct {
     public void setDiscount(Discount discount) {
         this.discount = discount;
     }
-    
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public ProductVariables getProductVariables() {
+        return productVariables;
+    }
+
+    public void setProductVariables(ProductVariables productVariables) {
+        this.productVariables = productVariables;
+    }
+
     @Override
     public String toString() {
         return "AhProduct{" +

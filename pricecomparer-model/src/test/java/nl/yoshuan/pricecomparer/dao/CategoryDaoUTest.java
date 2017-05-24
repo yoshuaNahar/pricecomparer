@@ -13,6 +13,12 @@ import static org.hamcrest.core.IsNull.nullValue;
 
 public class CategoryDaoUTest extends DaoTestSetup {
 
+
+    // I didnt use TDD when developing this part. because first off, these arent
+    // even good unit tests since I include the db. Initialization also takes ~4 seconds
+    // which is not good.
+
+
     // I added tests for the methods I will definitely use.
     // Only add more tests if I want to try out a specific feature or if I encountered a bug.
     private CategoryDao categoryDao;
@@ -133,13 +139,16 @@ public class CategoryDaoUTest extends DaoTestSetup {
     @Test
     public void persistChildCategoryParentDetached() {
         Category parentCategory = createParentCategory();
-        Category childCategory = createFirstChildCategory(createParentCategory());
+        Category childCategory = createFirstChildCategory(null);
 
         dbCommandExecutor.executeCommand(() -> categoryDao.persist(parentCategory));
 
-//        Category managedParentCategory = categoryDao.
+        Category managedParentCategory = categoryDao.findByPropertyValue("categoryName", parentCategory.getCategoryName()).get(0);
+        childCategory.setParentCategory(managedParentCategory);
 
-//        dbCommandExecutor.executeCommand(() -> categoryDao.persist(childCategory));
+        dbCommandExecutor.executeCommand(() -> categoryDao.persist(childCategory));
+
+        assertThat(categoryDao.getCount(), is(2L));
     }
 
 }

@@ -1,7 +1,6 @@
 package nl.yoshuan.pricecomparer.dao;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 
@@ -33,9 +32,18 @@ public abstract class GenericDaoImpl<E, ID> implements GenericDao<E, ID> {
     }
 
     @Override
+    public List<E> findByPropertyValue(String column, String columnValue) {
+        return em
+                .createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e WHERE e." + column + " = :columnValue", entityClass)
+                .setParameter("columnValue", columnValue)
+                .getResultList();
+    }
+
+    @Override
     public List<E> findAll(String orderColumn) {
-        TypedQuery<E> query = em.createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e ORDER BY e." + orderColumn, entityClass);
-        return query.getResultList();
+        return em
+                .createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e ORDER BY e." + orderColumn, entityClass)
+                .getResultList();
     }
 
     @Override
@@ -65,6 +73,7 @@ public abstract class GenericDaoImpl<E, ID> implements GenericDao<E, ID> {
                 .getResultList().size() == 1;
     }
 
+    // There should only be one. That is why I don't use SELECT 1 FROM or getSingleResult or getFirstResult
     @Override
     public boolean existsByPropertyValue(String column, String columnValue) {
         return em

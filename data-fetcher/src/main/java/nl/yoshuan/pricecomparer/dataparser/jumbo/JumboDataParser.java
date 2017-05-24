@@ -1,6 +1,5 @@
 package nl.yoshuan.pricecomparer.dataparser.jumbo;
 
-import nl.yoshuan.pricecomparer.dataparser.DataParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,7 +20,7 @@ import java.util.regex.Pattern;
 // TODO: Write Readme with every spec
 // TODO: FINISH THIS AND WRITE REAL ALGORITHM
 
-public class JumboDataParser implements DataParser<Elements> {
+public class JumboDataParser {
 
     private static final String CATEGORY = "Aardappel, rijst, pasta";
     private static final String[] SUB_CATEGORY = { "Ongeschilde aardapelen", "Geschilde aardapelen", "Aardappelpuree",
@@ -206,7 +205,6 @@ public class JumboDataParser implements DataParser<Elements> {
         System.out.println(string.substring((matcher.start() + 10), matcher.end()));
     }
 
-    @Override
     public Elements readLocalFile() {
         File file = new File(getClass().getClassLoader().getResource(htmlFileLocation).getFile());
         StringBuilder result = new StringBuilder();

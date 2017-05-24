@@ -7,6 +7,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static nl.yoshuan.pricecomparer.utils.CategoryUtil.GROENTE;
 import static nl.yoshuan.pricecomparer.utils.CategoryUtil.createFirstChildCategory;
 import static nl.yoshuan.pricecomparer.utils.CategoryUtil.createParentCategory;
 import static org.hamcrest.CoreMatchers.is;
@@ -33,24 +34,29 @@ public class ProductDaoUTest extends DaoTestSetup {
 
     @Test
     public void addProductAndFindIt() {
-        Category managedCategory = em.find(Category.class, 1L);
+        Category managedCategory = em.find(Category.class, 2L);
+        Product product = new Product("tomaat", "500g", "AH", managedCategory);
+
+        Product managedProduct = dbCommandExecutor.executeCommand(() -> productDao.persist(product));
+
+        assertThat(productDao.getCount(), is(1L));
+        assertThat(managedProduct.getName(), is("tomaat"));
+        assertThat(managedProduct.getCategory().getCategoryName(), is(GROENTE));
+    }
+
+    @Test
+    public void addProductAndFindItByProperty() {
+        Category managedCategory = em.find(Category.class, 2L);
         Product product = new Product("tomaat", "500g", "AH", managedCategory);
 
         dbCommandExecutor.executeCommand(() -> productDao.persist(product));
 
-        assertThat(productDao.getCount(), is(1L));
-        assertThat(productDao.findById(1L).getName(), is("tomaat"));
-    }
-
-    @Test
-    public void addProductWithCategoryAndFindIt() {
-        Category newCategory = new Category("fruit", createParentCategory());
-        Product product = new Product("tomaat", "500g", "AH", newCategory);
-
-        dbCommandExecutor.executeCommand(() -> productDao.persist(product));
+        Product managedProduct = productDao.findByPropertyValue("name", "tomaat").get(0);
 
         assertThat(productDao.getCount(), is(1L));
-        assertThat(productDao.findById(1L).getName(), is("tomaat"));
+        assertThat(managedProduct.getId(), is(1L));
+        assertThat(managedProduct.getName(), is("tomaat"));
+        assertThat(managedProduct.getCategory().getCategoryName(), is(GROENTE));
     }
 
     private void loadCategories() {

@@ -9,6 +9,8 @@ public interface GenericDao<E, ID> {
 
 	E findReferenceById(ID id);
 
+    List<E> findByPropertyValue(String column, String columnValue);
+
 	List<E> findAll(String orderColumn);
 
 	Long getCount();
