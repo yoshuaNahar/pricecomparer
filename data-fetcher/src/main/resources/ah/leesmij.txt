@@ -1,0 +1,12 @@
+Inside each ah json page there is a embedded with links to subcategory pages.
+I need to check if it exists from the root/top level page till the deepest subcategory.
+
+Quick ref:
+ah-groente-page.json --> line 524 "productSrc": "Filters"
+ah-groente-tomaatkomkommer-page.json --> line 494 "productSrc": "Filters"
+ah-groente-tomatenkomkommer-tomaten-page.json --> line 726 "productSrc":"Filters" (has an empty filter, because it is the deepest subcategory)
+
+Deleted it, because each page has a productCategoryNavigation
+ah-product-page.json --> line 50 "productSrc": "productCategoryNavigation" (doesn't have a filter)
+
+

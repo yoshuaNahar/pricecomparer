@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  mysql:
+    image: mysql
+    ports:
+      - "3307:3306" # I already have a local instance of MySQL
+    environment:
+      - MYSQL_USER=springuser
+      - MYSQL_PASSWORD=ThePassword
+      - MYSQL_DATABASE=db_example
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
+    volumes:
+      - ~/Documents/IdeaProjects/pricecomparer/tmp_db_data:/var/lib/mysql

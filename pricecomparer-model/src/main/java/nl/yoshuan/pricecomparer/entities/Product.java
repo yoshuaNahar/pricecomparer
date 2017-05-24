@@ -1,0 +1,94 @@
+package nl.yoshuan.pricecomparer.entities;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "product")
+public class Product {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_id", nullable = false, insertable = false, updatable = false)
+    private Long id;
+    
+    @Column(name = "name", nullable = false)
+    private String name;
+    
+    @Column(name = "amount", nullable = false)
+    private String amount;
+    
+    @Column(name = "brand", nullable = false)
+    private String brand;
+    
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "category_id", nullable = false, updatable = false)
+    private Category category;
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
+    private List<ProductVariables> productsVariables = new ArrayList<>();
+    
+    protected Product() {
+    }
+    
+    public Product(String name, String amount, String brand, Category category, List<ProductVariables> productsVariables) {
+        this.name = name;
+        this.amount = amount;
+        this.brand = brand;
+        this.category = category;
+        this.productsVariables = productsVariables;
+    }
+
+    public Product(String name, String amount, String brand, Category category) {
+        this.name = name;
+        this.amount = amount;
+        this.brand = brand;
+        this.category = category;
+    }
+
+    public Long getId() {
+        return id;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getAmount() {
+        return amount;
+    }
+    
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
+    
+    public String getBrand() {
+        return brand;
+    }
+    
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+    
+    public Category getCategory() {
+        return category;
+    }
+    
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+    
+    public List<ProductVariables> getProductsVariables() {
+        return productsVariables;
+    }
+    
+    public void setProductsVariables(List<ProductVariables> productsVariables) {
+        this.productsVariables = productsVariables;
+    }
+    
+}
