@@ -21,6 +21,12 @@ public final class AhProductMapper {
         if (ahProduct.getDiscount() == null) {
             ahProduct.setDiscount(new AhProduct.Discount(null));
         }
+        if (ahProduct.getPriceLabel().getPriceWas() == null) {
+            ahProduct.getPriceLabel().setPriceWas("0");
+        }
+        if (ahProduct.getPropertyIcons() == null) {
+            ahProduct.setPropertyIcons(new ArrayList<>());
+        }
 
         List<ProductVariables> ahProductVariables = new ArrayList<>();
         ahProductVariables.add(

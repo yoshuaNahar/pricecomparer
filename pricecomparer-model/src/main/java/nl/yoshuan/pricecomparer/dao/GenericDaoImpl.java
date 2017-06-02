@@ -1,17 +1,18 @@
 package nl.yoshuan.pricecomparer.dao;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 
 public abstract class GenericDaoImpl<E, ID> implements GenericDao<E, ID> {
 
-    protected final Class<E> entityClass;
+    private final Class<E> entityClass;
 
-    // @Autowired // For the future
-    protected EntityManager em;
+    @PersistenceContext EntityManager em;
 
-    protected GenericDaoImpl(Class<E> entityClass) {
+    GenericDaoImpl(Class<E> entityClass) {
         this.entityClass = entityClass;
     }
 
@@ -29,6 +30,18 @@ public abstract class GenericDaoImpl<E, ID> implements GenericDao<E, ID> {
             return null;
         }
         return em.getReference(entityClass, id);
+    }
+
+    @Override
+    public E findByUniquePropertyValue(String column, String columnValue) {
+        try {
+            return em
+                    .createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e WHERE e." + column + " = :columnValue", entityClass)
+                    .setParameter("columnValue", columnValue)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override
@@ -56,6 +69,7 @@ public abstract class GenericDaoImpl<E, ID> implements GenericDao<E, ID> {
     @Override
     public E persist(E entity) {
         em.persist(entity);
+        em.flush(); // Why doesnt Spring transaction automatically add the em.flush inside the transaction? OR why isnt Hibernate AUTO flush active?????????
         return entity;
     }
 
@@ -73,9 +87,9 @@ public abstract class GenericDaoImpl<E, ID> implements GenericDao<E, ID> {
                 .getResultList().size() == 1;
     }
 
-    // There should only be one. That is why I don't use SELECT 1 FROM or getSingleResult or getFirstResult
+    // Should probably only be used when the column is unique, like in the category table for the name or in the product table
     @Override
-    public boolean existsByPropertyValue(String column, String columnValue) {
+    public boolean existsByUniquePropertyValue(String column, String columnValue) {
         return em
                 .createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e WHERE e." + column + " = :columnValue")
                 .setParameter("columnValue", columnValue)
@@ -85,16 +99,6 @@ public abstract class GenericDaoImpl<E, ID> implements GenericDao<E, ID> {
     @Override
     public void makeTransient(E entity) {
         em.remove(entity);
-    }
-
-    @Override
-    public EntityManager getEntityManager() {
-        return em;
-    }
-
-    // Till I implement DI
-    public void setEntityManager(EntityManager em) {
-        this.em = em;
     }
 
 }

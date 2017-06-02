@@ -1,73 +1,69 @@
 package nl.yoshuan.pricecomparer.dao;
 
+import nl.yoshuan.pricecomparer.config.TestConfig;
 import nl.yoshuan.pricecomparer.entities.Category;
 import nl.yoshuan.pricecomparer.entities.Product;
-import nl.yoshuan.pricecomparer.utils.DaoTestSetup;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
-import static nl.yoshuan.pricecomparer.utils.CategoryUtil.GROENTE;
-import static nl.yoshuan.pricecomparer.utils.CategoryUtil.createFirstChildCategory;
-import static nl.yoshuan.pricecomparer.utils.CategoryUtil.createParentCategory;
+import static nl.yoshuan.pricecomparer.utils.CategoryUtil.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ProductDaoUTest extends DaoTestSetup {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = TestConfig.class)
+@Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public class ProductDaoUTest {
 
-    private ProductDao productDao;
+    @Autowired private ProductDao productDao;
+    @Autowired private CategoryDao categoryDao;
 
     @Before
     public void setup() {
-        initializeTestDB();
-
-        productDao = new ProductDaoImpl();
-        productDao.setEntityManager(em);
-
         loadCategories();
-    }
-
-    @After
-    public void cleanUp() {
-        closeEntityManager();
     }
 
     @Test
     public void addProductAndFindIt() {
-        Category managedCategory = em.find(Category.class, 2L);
+        Category managedCategory = categoryDao.findById(2L);
         Product product = new Product("tomaat", "500g", "AH", managedCategory);
 
-        Product managedProduct = dbCommandExecutor.executeCommand(() -> productDao.persist(product));
+        Product managedProduct = productDao.persist(product);
 
         assertThat(productDao.getCount(), is(1L));
         assertThat(managedProduct.getName(), is("tomaat"));
-        assertThat(managedProduct.getCategory().getCategoryName(), is(GROENTE));
+        assertThat(managedProduct.getCategory().getName(), is(GROENTE));
     }
 
     @Test
     public void addProductAndFindItByProperty() {
-        Category managedCategory = em.find(Category.class, 2L);
+        Category managedCategory = categoryDao.findById(2L);
         Product product = new Product("tomaat", "500g", "AH", managedCategory);
 
-        dbCommandExecutor.executeCommand(() -> productDao.persist(product));
-
-        Product managedProduct = productDao.findByPropertyValue("name", "tomaat").get(0);
+        productDao.persist(product);
 
         assertThat(productDao.getCount(), is(1L));
+
+        Product managedProduct = productDao.findByUniquePropertyValue("name", "tomaat");
+
         assertThat(managedProduct.getId(), is(1L));
         assertThat(managedProduct.getName(), is("tomaat"));
-        assertThat(managedProduct.getCategory().getCategoryName(), is(GROENTE));
+        assertThat(managedProduct.getCategory().getName(), is(GROENTE));
     }
 
     private void loadCategories() {
         Category parentCategory = createParentCategory();
         Category childCategory = createFirstChildCategory(parentCategory);
+        parentCategory.getChildCategories().add(childCategory);
 
-        dbCommandExecutor.executeCommand(() -> {
-            em.persist(parentCategory);
-            em.persist(childCategory);
-            return null;
-        });
+        categoryDao.persist(parentCategory);
     }
 
 }

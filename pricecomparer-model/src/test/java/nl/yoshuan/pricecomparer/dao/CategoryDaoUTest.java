@@ -1,50 +1,44 @@
 package nl.yoshuan.pricecomparer.dao;
 
+import nl.yoshuan.pricecomparer.config.TestConfig;
 import nl.yoshuan.pricecomparer.entities.Category;
-import nl.yoshuan.pricecomparer.utils.DaoTestSetup;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import static nl.yoshuan.pricecomparer.utils.CategoryUtil.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 
-public class CategoryDaoUTest extends DaoTestSetup {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = TestConfig.class)
+@Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) // Link below for why I need this...
+// https://www.petrikainulainen.net/programming/spring-framework/spring-from-the-trenches-resetting-auto-increment-columns-before-each-test-method/
+public class CategoryDaoUTest {
+    // I didnt use TDD when developing this part. because these arent
+    // even unit tests since I include the db.
 
-
-    // I didnt use TDD when developing this part. because first off, these arent
-    // even good unit tests since I include the db. Initialization also takes ~4 seconds
-    // which is not good.
-
-
-    // I added tests for the methods I will definitely use.
+    // I only added tests for the methods I will definitely use.
     // Only add more tests if I want to try out a specific feature or if I encountered a bug.
-    private CategoryDao categoryDao;
 
-    @Before
-    public void setup() {
-        initializeTestDB();
-
-        categoryDao = new CategoryDaoImpl();
-        categoryDao.setEntityManager(em);
-    }
-
-    @After
-    public void cleanUp() {
-        closeEntityManager();
-    }
+    @Autowired private CategoryDaoImpl categoryDao;
 
     @Test
     public void addCategoryAndFindIt() {
-        Category parentCategory = createParentCategory();
-        dbCommandExecutor.executeCommand(() -> categoryDao.persist(parentCategory));
-        Category category = categoryDao.findReferenceById(1L);
+        Category category = createParentCategory();
+        categoryDao.persist(category);
+
+        Category managedCategory = categoryDao.findReferenceById(1L);
 
         assertThat(categoryDao.getCount(), is(1L));
-        assertThat(category.getCategoryName(), is(GROENTE_FRUIT_AARDAPPELEN));
-        assertThat(category.getParentCategory(), is(nullValue()));
+        assertThat(managedCategory.getName(), is(GROENTE_FRUIT_AARDAPPELEN));
+        assertThat(managedCategory.getParentCategory(), is(nullValue()));
     }
 
     @Test
@@ -57,37 +51,37 @@ public class CategoryDaoUTest extends DaoTestSetup {
         Category parentCategory = createParentCategory();
         Category childCategory = createFirstChildCategory(parentCategory);
 
-        dbCommandExecutor.executeCommand(() -> categoryDao.persist(parentCategory));
-        dbCommandExecutor.executeCommand(() -> categoryDao.persist(childCategory));
+        categoryDao.persist(parentCategory);
+        categoryDao.persist(childCategory);
 
         Category category = categoryDao.findReferenceById(2L);
 
         assertThat(categoryDao.getCount(), is(2L));
-        assertThat(category.getCategoryName(), is(GROENTE));
-        assertThat(category.getParentCategory().getCategoryName(), is(GROENTE_FRUIT_AARDAPPELEN));
+        assertThat(category.getName(), is(GROENTE));
+        assertThat(category.getParentCategory().getName(), is(GROENTE_FRUIT_AARDAPPELEN));
         assertThat(category.getParentCategory().getParentCategory(), is(nullValue()));
     }
 
     @Test
     public void addTwoCategoriesPersistParentAndFindBoth() {
         Category parentCategory = createParentCategory();
-        parentCategory.getChildCategories().add(new Category(GROENTE, parentCategory));
+        parentCategory.getChildCategories().add(new Category(GROENTE, parentCategory)); // CascadeType.ALL
 
-        dbCommandExecutor.executeCommand(() -> categoryDao.persist(parentCategory));
+        categoryDao.persist(parentCategory);
 
         Category category = categoryDao.findReferenceById(1L);
 
         assertThat(categoryDao.getCount(), is(2L));
-        assertThat(category.getCategoryName(), is(GROENTE_FRUIT_AARDAPPELEN));
-        assertThat(category.getChildCategories().get(0).getCategoryName(), is(GROENTE));
+        assertThat(category.getName(), is(GROENTE_FRUIT_AARDAPPELEN));
+        assertThat(category.getChildCategories().get(0).getName(), is(GROENTE));
     }
 
     @Test(expected = IllegalStateException.class)
+    // This is happening, because parentCategory is transient, meaning parentCategory does not have an id
     public void addTwoCategoriesPersistChildAndGetIllegalStateException() {
-        Category childCategory = createFirstChildCategory(createParentCategory());
-        // This is happening, because parentCategory is transient, meaning parentCategory does not have an id
+        Category childCategory = createFirstChildCategory(createParentCategory()); // CascadeType.NONE
 
-        dbCommandExecutor.executeCommand(() -> categoryDao.persist(childCategory));
+        categoryDao.persist(childCategory);
     }
 
     @Test
@@ -102,53 +96,57 @@ public class CategoryDaoUTest extends DaoTestSetup {
                 category = new Category(categoryNames[i], category);
             }
             Category categoryToPersist = category;
-            dbCommandExecutor.executeCommand(() -> categoryDao.persist(categoryToPersist));
+            categoryDao.persist(categoryToPersist);
         }
 
         assertThat(categoryDao.getCount(), is(3L));
-        assertThat(categoryDao.findReferenceById(3L).getCategoryName(), is("tomaat-komkommer"));
+        assertThat(categoryDao.findReferenceById(3L).getName(), is("tomaat-komkommer"));
     }
 
     @Test
-    public void persistDuplicateCategory() {
+    public void addDuplicateCategory() {
         Category category = createParentCategory();
         Category duplicateCategory = createParentCategory();
 
         // Persist should check if the name (unique) exists, if it does, persist will not be performed
-        dbCommandExecutor.executeCommand(() -> categoryDao.persistIfNotExist(category));
-        dbCommandExecutor.executeCommand(() -> categoryDao.persistIfNotExist(duplicateCategory));
+        category = categoryDao.persistIfNotExist(category);
+        duplicateCategory = categoryDao.persistIfNotExist(duplicateCategory);
 
         assertThat(categoryDao.getCount(), is(1L));
         assertThat(category.getId(), is(1L));
-        assertThat(duplicateCategory.getId(), is(nullValue()));
+        assertThat(duplicateCategory.getId(), is(1L));
     }
 
     @Test
-    public void persistTwoCategoriesAtOnceManually() {
+    public void addTwoCategoriesAtOnceManually() {
         Category parentCategory = createParentCategory();
         Category childCategory = createFirstChildCategory(parentCategory);
 
-        categoryDao.getEntityManager().getTransaction().begin();
         categoryDao.persist(parentCategory);
         categoryDao.persist(childCategory);
-        categoryDao.getEntityManager().getTransaction().commit();
 
         assertThat(categoryDao.getCount(), is(2L));
+
+        Category managedCategory2 = categoryDao.findById(2L);
+
+        assertThat(managedCategory2.getParentCategory(), is(parentCategory));
     }
 
     @Test
-    public void persistChildCategoryParentDetached() {
+    public void addChildCategoryParentDetached() {
         Category parentCategory = createParentCategory();
         Category childCategory = createFirstChildCategory(null);
 
-        dbCommandExecutor.executeCommand(() -> categoryDao.persist(parentCategory));
+        categoryDao.persist(parentCategory);
 
-        Category managedParentCategory = categoryDao.findByPropertyValue("categoryName", parentCategory.getCategoryName()).get(0);
+        Category managedParentCategory = categoryDao
+                .findByPropertyValue("name", createParentCategory().getName()).get(0);
         childCategory.setParentCategory(managedParentCategory);
 
-        dbCommandExecutor.executeCommand(() -> categoryDao.persist(childCategory));
+        categoryDao.persist(childCategory);
 
         assertThat(categoryDao.getCount(), is(2L));
+        assertThat(childCategory.getParentCategory(), is(managedParentCategory));
     }
 
 }

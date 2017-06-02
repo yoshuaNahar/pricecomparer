@@ -1,41 +1,29 @@
 package nl.yoshuan.pricecomparer.dao;
 
 import nl.yoshuan.pricecomparer.entities.Category;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
+@Repository
 public class CategoryDaoImpl extends GenericDaoImpl<Category, Long> implements CategoryDao {
 
     public CategoryDaoImpl() {
         super(Category.class);
     }
 
-    // I couldve used existsByPropertyValue, but if I use that I still need
+    // I could've used existsByUniquePropertyValue, but if I use that I still need
     // to add the findBypropertyValue inside the else part
+
+    // When using this set the category = persistIfNotExist(..), in contrary to persist, this method doesnt set the ID automatically
     @Override
     public Category persistIfNotExist(Category category) {
-        List<Category> categories = findByPropertyValue("categoryName", category.getCategoryName());
-        Category managedCategory = null;
-        if (categories.size() > 0) {
-            managedCategory = categories.get(0);
-        }
+        Category managedCategory = findByUniquePropertyValue("name", category.getName());
         if (managedCategory == null) {
-            em.persist(category);
-            return category;
+            return persist(category);
+        } else {
+            return em.getReference(Category.class, managedCategory.getId());
         }
-        return managedCategory;
     }
-
-// I can't use this, because If an exception is thrown I their is no transaction to commit, which causes an IllegalStateException: Transaction not active to be thrown.
-//    @Override
-//    public Category persistIfNotExist(Category category) {
-//        try {
-//            super.persist(category);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return category;
-//    }
-
+    // I could've also placed this inside the genericClass but then I would've needed to use reflection for the field name, and use 2 abstract
+    // methods to get the Entity.getName and entity.getId
 
 }
