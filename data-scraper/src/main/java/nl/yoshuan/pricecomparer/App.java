@@ -12,13 +12,14 @@ import java.util.List;
 public class App {
 
     public static void main(String[] args) {
-        ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class); // This DbConfigTest class is from the model module.
+        ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
         AhDbHandler dbHandler = ctx.getBean(AhDbHandler.class);
         AhDataScraper ahDataScraper = ctx.getBean(AhDataScraper.class);
 
-        List<AhProduct> ahProducts = ahDataScraper.getAllProductsFrom("/producten/aardappel-groente-fruit/groente/tomaat-paprika-mais/tomaten");
+        List<AhProduct> ahProducts = ahDataScraper.getAllAhProductsFrom("/producten/aardappel-groente-fruit/groente");
 
-        dbHandler.persistProductsToDb(ahProducts);
+        // If product already exists don't persist, same for categories. ProductVariables will persist each time!
+        dbHandler.persistEntitiesToDb(ahProducts);
     }
 
 }

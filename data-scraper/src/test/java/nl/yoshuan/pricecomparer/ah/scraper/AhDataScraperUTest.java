@@ -21,7 +21,7 @@ public class AhDataScraperUTest {
 
     @Test
     public void getAhProductsFromDeepestSubCategory() {
-        List<AhProduct> ahProducts = ahDataScraper.getAllProductsFrom("/producten/aardappel-groente-fruit/groente/tomaat-paprika-mais/tomaten/trostomaten");
+        List<AhProduct> ahProducts = ahDataScraper.getAllAhProductsFrom("/producten/aardappel-groente-fruit/groente/tomaat-paprika-mais/tomaten/trostomaten");
 
         AhProduct firstProduct = ahProducts.get(0);
 
@@ -31,7 +31,7 @@ public class AhDataScraperUTest {
 
     @Test
     public void getAhProductsFromSecondDeepestSubCategory() {
-        List<AhProduct> ahProducts = ahDataScraper.getAllProductsFrom("/producten/aardappel-groente-fruit/groente/tomaat-paprika-mais/tomaten/");
+        List<AhProduct> ahProducts = ahDataScraper.getAllAhProductsFrom("/producten/aardappel-groente-fruit/groente/tomaat-paprika-mais/tomaten/");
 
         AhProduct firstProduct = ahProducts.get(0);
 

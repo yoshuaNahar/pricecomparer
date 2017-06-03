@@ -18,8 +18,8 @@ public class AhDbHandlerUtil {
     private AhDbHandlerUtil() {}
 
     public static DbEntitiesHolder mapToDbEntities(AhProduct ahProduct) {
-//        ahProduct.getCategoryName()
-        Category ahCategory = new Category(ahProduct.getFullCategoryName(), null);
+        // not gonna use ahProduct.getCategoryName()
+        Category category = new Category(ahProduct.getFullCategoryName(), null);
 
         if (ahProduct.getDiscount() == null) {
             ahProduct.setDiscount(new AhProduct.Discount(null));
@@ -31,8 +31,7 @@ public class AhDbHandlerUtil {
             ahProduct.setPropertyIcons(new ArrayList<>());
         }
 
-        List<ProductVariables> ahProductVariables = new ArrayList<>();
-        ahProductVariables.add(
+        ProductVariables productVariables =
                 new ProductVariables(ahProduct.getProductSrc()
                         , ahProduct.getImageSrc()
                         , (int) (Double.parseDouble(ahProduct.getPriceLabel().getPriceNow()) * 100)
@@ -41,24 +40,22 @@ public class AhDbHandlerUtil {
                         , ahProduct.getDiscountImageSrc()
                         , AH
                         , ahProduct.getPropertyIcons().toString()
-                        , new Date()));
+                        , new Date());
 
         Product product =
                 new Product(ahProduct.getName()
                         , ahProduct.getUnitSize()
                         , ahProduct.getBrandName()
-                        , ahCategory); // dont add the productVariable,
+                        , category); // dont add the productVariable,
         // You will get a TransientPropertyValueException, because you are trying to
         // persist an object that has a reference to a transient object (productVariable)
 
-        // PRODUCT https://www.ah.nl/producten/product/wi233066/tasty-tom-gold has no brand name!
+        // Some AH products like, https://www.ah.nl/producten/product/wi233066/tasty-tom-gold has no brand name!
         if (product.getBrand() == null) {
             product.setBrand("AH");
         }
 
-        ahProductVariables.get(0).setProduct(product);
-
-        return new DbEntitiesHolder(ahCategory, product, ahProductVariables.get(0));
+        return new DbEntitiesHolder(category, product, productVariables);
     }
 
     public static List<Category> splitFullCategory(String fullCategoryName) {

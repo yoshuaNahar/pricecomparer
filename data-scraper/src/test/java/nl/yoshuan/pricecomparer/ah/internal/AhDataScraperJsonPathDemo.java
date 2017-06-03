@@ -69,8 +69,7 @@ public final class AhDataScraperJsonPathDemo {
     }
 
     private void setImgSrcs(List<AhProduct> products) {
-        TypeRef<List<String>> typeRef = new TypeRef<List<String>>() {
-        };
+        TypeRef<List<String>> typeRef = new TypeRef<List<String>>() {};
 
         List<String> imgSrcs = readContext.read("$._embedded.lanes[*]._embedded.items[*]._embedded.product.images[2].link.href", typeRef);
 

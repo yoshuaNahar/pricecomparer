@@ -26,7 +26,7 @@ public class AhDataScraper {
 
     // This will have to be recursive. The basis is when there is no
     // Filters with label Soort in the json page (meaning it is the deepest subCategory)
-    public List<AhProduct> getAllProductsFrom(String categoryName) {
+    public List<AhProduct> getAllAhProductsFrom(String categoryName) {
         ReadContext readContext = JsonPath.using(Configuration.defaultConfiguration())
                 .parse(readJsonFrom("https://www.ah.nl/service/rest" + categoryName));
 
@@ -47,7 +47,7 @@ public class AhDataScraper {
             // subCategories exist, so enter first
             for (String subCategory : subCategories) {
                 logger.debug("Current subcategory: " + subCategory);
-                ahProducts.addAll(getAllProductsFrom(subCategory));
+                ahProducts.addAll(getAllAhProductsFrom(subCategory));
             }
         }
 

@@ -32,7 +32,7 @@ public class AhDbHandler {
     }
 
     // not tested
-    public void persistProductsToDb(List<AhProduct> ahProducts) {
+    public void persistEntitiesToDb(List<AhProduct> ahProducts) {
         List<AhDbHandlerUtil.DbEntitiesHolder> dbEntitiesHolderList = toDbEntityHolderList(ahProducts);
         HashMap<Integer, Category> allCategories = persistAllCategoriesAndSortProductToCategoryFrom(dbEntitiesHolderList);
 
@@ -43,8 +43,10 @@ public class AhDbHandler {
 
             Category managedCategory = categoryDao.persistIfNotExist(category);
             product.setCategory(managedCategory);
-            System.out.println(product);
-            productDao.persist(product);
+
+            Product managedProduct = productDao.persistIfNotExist(product);
+            productVariables.setProduct(managedProduct);
+
             productVariablesDao.persist(productVariables);
         }
     }

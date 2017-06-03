@@ -3,26 +3,13 @@
 Parts:
 - Get all data from AH (JsonPath, Gson)
 - Get all data from Jumbo (JSoup)
-
-
 - Create the layer that will turn AhProduct data into classes for Hibernate to persist
-
-
-- Create a Database and add a Hibernate model for it (Spring Boot JPA-Hibernate)
-- Create the Repository Layer (Spring Boot REST)
+- Create a Database and add a Hibernate model for it (Spring-ORM + Hibernate) 
+- Create the Repository Layer (Spring WebMVC or Spring Boot web starter + REST)
 - Create the Front-end (Angular)
 
 
-Where am I:
-- Write code to get Ah data to classes ✓
-
-- Create database that suites Hibernate
-- Write code to get Ah data into my classes for Hibernate
-
-    The issue currently is that my Hibernate database is not good.
-    For example, my database can't deal with me adding a product that both
-    Jumbo and AH sell (which is pretty much the whole idea of this app).
-
-
-
-- Write code for other parts
+    The issue currently is that I have no idea how I will sort products
+    from AH and Jumbo. They have different category structures.
+    
+    Taking the data and persisting it to db is not the problem.

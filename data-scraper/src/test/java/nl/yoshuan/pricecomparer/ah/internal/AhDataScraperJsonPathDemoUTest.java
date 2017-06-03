@@ -23,22 +23,18 @@ public class AhDataScraperJsonPathDemoUTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void init_ThrowExceptionWhenFileNotFound() {
+    public void createAHDataScraperWithNonExistantFile() {
         ahDataScraperJsonPathDemo = new AhDataScraperJsonPathDemo("nonExistentFile");
     }
 
     @Test
-    public void getJson_checkJsonFileReadData() {
+    public void checkJsonPathWorking() {
         assertThat(ahDataScraperJsonPathDemo.getReadContext(), is(not("")));
-    }
-
-    @Test
-    public void getJson_checkJsonPathWorking() {
         assertThat(ahDataScraperJsonPathDemo.getReadContext().read("$._links.self.href"), is(not("")));
     }
 
     @Test
-    public void getProductNames_checkWorking() {
+    public void getProductNames() {
         JsonArray productDescriptions = ahDataScraperJsonPathDemo.getProductNames();
 
         assertThat(productDescriptions.get(0).toString(), is("\"AH TrostoÂ\u00ADmaÂ\u00ADten\""));
@@ -46,7 +42,7 @@ public class AhDataScraperJsonPathDemoUTest {
     }
 
     @Test
-    public void getSingleProduct_checkWorking() {
+    public void getProductsAndCheckSingleProduct() {
         List<Map<String, Object>> products = ahDataScraperJsonPathDemo.getProducts();
         Map<String, Object> product = products.get(0);
 
@@ -56,7 +52,7 @@ public class AhDataScraperJsonPathDemoUTest {
     }
 
     @Test
-    public void getAhProducts_checkWorking() {
+    public void getAhProducts() {
         List<AhProduct> product = ahDataScraperJsonPathDemo.getAhProduct();
 
         assertThat(product.size(), is(20));

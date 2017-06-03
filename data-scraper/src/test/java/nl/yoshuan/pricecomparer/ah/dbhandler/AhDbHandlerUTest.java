@@ -23,9 +23,6 @@ import static org.hamcrest.core.IsNull.nullValue;
 @Transactional
 public class AhDbHandlerUTest {
 
-    // TODO: done with AhDataScraperUTest
-    // TODO: write tests for this class and start with Jumbo todos
-    // TODO: maybe remove internal package
     @Autowired private AhDbHandler ahDbHandler;
 
     @Test

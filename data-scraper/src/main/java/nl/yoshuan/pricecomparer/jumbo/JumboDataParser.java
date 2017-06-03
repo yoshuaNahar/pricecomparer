@@ -15,7 +15,6 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// TODO: Upload code to github
 // TODO: Rewrite code from getElements to select(xpath)
 // TODO: Write Readme with every spec
 // TODO: FINISH THIS AND WRITE REAL ALGORITHM
