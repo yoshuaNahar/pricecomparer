@@ -21,7 +21,11 @@ public class Category implements Serializable {
     @JoinColumn(name = "parent_category_id", referencedColumnName = "category_id")
     private Category parentCategory;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "parentCategory")
+    // This also will be CascadeType.NONE, because in my data-parser I will have
+    // urls with the same parent/root category and different child/subcategories
+    // When using my persistIfNotExist on the parent (that already exists) I wont be able to
+    // persist the children. So I will do this manually.
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentCategory")
     private List<Category> childCategories = new ArrayList<>();
 
     protected Category() {

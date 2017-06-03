@@ -1,7 +1,7 @@
 package nl.yoshuan.pricecomparer;
 
-import nl.yoshuan.pricecomparer.dao.CategoryDao;
-import nl.yoshuan.pricecomparer.dao.CategoryDaoImpl;
+import nl.yoshuan.pricecomparer.daos.CategoryDao;
+import nl.yoshuan.pricecomparer.daos.CategoryDaoImpl;
 import nl.yoshuan.pricecomparer.entities.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +37,11 @@ public class Application {
         em.getTransaction().commit();
 
         try {
-            System.out.println(category.getCategoryName());
-            System.out.println(category.getParentCategory().getCategoryName());
-            System.out.println(category.getParentCategory().getParentCategory().getCategoryName());
-            System.out.println(category.getParentCategory().getParentCategory().getParentCategory().getCategoryName());
-            System.out.println(category.getParentCategory().getParentCategory().getParentCategory().getParentCategory().getCategoryName());
+            System.out.println(category.getName());
+            System.out.println(category.getParentCategory().getName());
+            System.out.println(category.getParentCategory().getParentCategory().getName());
+            System.out.println(category.getParentCategory().getParentCategory().getParentCategory().getName());
+            System.out.println(category.getParentCategory().getParentCategory().getParentCategory().getParentCategory().getName());
         } catch (NullPointerException e) {
             System.out.println("End of the category!");
         }
@@ -53,7 +53,7 @@ public class Application {
         System.out.println("start =============");
 
         CategoryDao categoryDAO = new CategoryDaoImpl();
-        categoryDAO.setEntityManager(em);
+//        categoryDAO.setEntityManager(em);
 
         Category parentCategory = categoryDAO.findById(7L);
         Category category = new Category("trostomaat-final", parentCategory);

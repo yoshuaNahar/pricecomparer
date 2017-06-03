@@ -10,7 +10,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <modules>
-        <module>data-fetcher</module>
+        <module>data-scraper</module>
         <module>pricecomparer-model</module>
         <module>pricecomparer-resource</module>
     </modules>
@@ -37,7 +37,7 @@
         </dependency>
     </dependencies>
 
-    <dependencyManagement> <!-- Probably gonna use the starter-test inside pricecomparer-resource and pricecomparer-model -->
+    <dependencyManagement> <!-- Probably gonna use spring-test lib inside pricecomparer-resource and pricecomparer-model -->
         <dependencies>
             <dependency>
                 <groupId>org.springframework</groupId>

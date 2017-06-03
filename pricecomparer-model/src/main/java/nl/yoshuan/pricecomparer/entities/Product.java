@@ -47,6 +47,18 @@ public class Product {
         this.category = category;
     }
 
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", amount='" + amount + '\'' +
+                ", brand='" + brand + '\'' +
+                ", category=" + category +
+                ", productsVariables=" + productsVariables +
+                '}';
+    }
+
     public Long getId() {
         return id;
     }
