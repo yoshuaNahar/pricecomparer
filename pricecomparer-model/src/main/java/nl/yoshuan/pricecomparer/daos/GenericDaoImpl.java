@@ -8,8 +8,7 @@ import java.util.List;
 
 public abstract class GenericDaoImpl<E, ID> implements GenericDao<E, ID> {
 
-    private final Class<E> entityClass;
-
+    final Class<E> entityClass;
     @PersistenceContext EntityManager em;
 
     GenericDaoImpl(Class<E> entityClass) {

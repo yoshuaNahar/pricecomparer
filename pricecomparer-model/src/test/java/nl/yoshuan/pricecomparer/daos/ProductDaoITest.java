@@ -33,7 +33,7 @@ public class ProductDaoITest {
     @Test
     public void addProductAndFindIt() {
         Category managedCategory = categoryDao.findById(2L);
-        Product product = new Product("tomaat", "500g", "AH", managedCategory);
+        Product product = new Product("tomaat", "500g", "AH", managedCategory, null);
 
         Product managedProduct = productDao.persist(product);
 
@@ -45,7 +45,8 @@ public class ProductDaoITest {
     @Test
     public void addProductAndFindItByProperty() {
         Category managedCategory = categoryDao.findById(2L);
-        Product product = new Product("tomaat", "500g", "AH", managedCategory);
+        System.out.println(managedCategory.getId());
+        Product product = new Product("tomaat", "500g", "AH", managedCategory, null);
 
         productDao.persist(product);
 
@@ -61,9 +62,9 @@ public class ProductDaoITest {
     private void loadCategories() {
         Category parentCategory = createParentCategory();
         Category childCategory = createFirstChildCategory(parentCategory);
-        parentCategory.getChildCategories().add(childCategory);
 
         categoryDao.persist(parentCategory);
+        categoryDao.persist(childCategory);
     }
 
 }

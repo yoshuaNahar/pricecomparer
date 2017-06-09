@@ -15,7 +15,7 @@ public class ProductVariables {
     @Column(name = "product_src", nullable = false, updatable = false)
     private String productSrc;
 
-    @Column(name = "image_src", nullable = false, updatable = false)
+    @Column(name = "image_src", updatable = false) // some products have no img apparently
     private String imageSrc;
 
     @Column(name = "price", nullable = false, updatable = false)
@@ -45,22 +45,9 @@ public class ProductVariables {
     @JoinColumn(name = "product_id", nullable = false, updatable = false)
     private Product product;
 
-    protected ProductVariables() {
-    }
+    protected ProductVariables() {}
 
-    public ProductVariables(String productSrc, String imageSrc, int price, int bonusPrice, String bonus, String bonusImageSrc, Supermarket supermarket, String productIcons, Date date) {
-        this.productSrc = productSrc;
-        this.imageSrc = imageSrc;
-        this.price = price;
-        this.bonusPrice = bonusPrice;
-        this.bonus = bonus;
-        this.bonusImageSrc = bonusImageSrc;
-        this.supermarket = supermarket;
-        this.productIcons = productIcons;
-        this.date = date;
-    }
-
-    public ProductVariables(String productSrc, String imageSrc, int price, int bonusPrice, String bonus, String bonusImageSrc, Supermarket supermarket, Date date, String productIcons, Product product) {
+    public ProductVariables(String productSrc, String imageSrc, int price, int bonusPrice, String bonus, String bonusImageSrc, Supermarket supermarket, String productIcons, Date date, Product product) {
         this.productSrc = productSrc;
         this.imageSrc = imageSrc;
         this.price = price;
@@ -75,6 +62,10 @@ public class ProductVariables {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId() {
+        this.id = id;
     }
 
     public String getProductSrc() {

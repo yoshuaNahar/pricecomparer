@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+import static nl.yoshuan.pricecomparer.App.SLEEP_TIME_BETWEEN_REQUESTS;
 import static nl.yoshuan.pricecomparer.ah.util.UrlDataReader.readJsonFrom;
 
 @Component
@@ -30,12 +31,10 @@ public class AhDataScraper {
         ReadContext readContext = JsonPath.using(Configuration.defaultConfiguration())
                 .parse(readJsonFrom("https://www.ah.nl/service/rest" + categoryName));
 
-        TypeRef<List<String>> typeRef = new TypeRef<List<String>>() {};
-
         List<AhProduct> ahProducts = new ArrayList<>();
-
         // Iterate through the last FilterItems to get the individual subcategories
-        List<String> subCategories = readContext.read("$._embedded.lanes[?(@.id == 'Filters')]._embedded.items[0]._embedded.filters[?(@.label == 'Soort')]._embedded.filterItems[*].navItem.link.href", typeRef);
+        List<String> subCategories = readContext
+                .read("$._embedded.lanes[?(@.id == 'Filters')]._embedded.items[0]._embedded.filters[?(@.label == 'Soort')]._embedded.filterItems[*].navItem.link.href", new TypeRef<List<String>>() {});
         logger.debug(subCategories.toString());
 
         // if no subcategories
@@ -46,30 +45,48 @@ public class AhDataScraper {
         } else {
             // subCategories exist, so enter first
             for (String subCategory : subCategories) {
+                waitBeforeSendingRequest();
                 logger.debug("Current subcategory: " + subCategory);
                 ahProducts.addAll(getAllAhProductsFrom(subCategory));
             }
         }
 
+        logger.debug("ahProducts size: " + ahProducts.size());
         return ahProducts;
     }
 
     private List<AhProduct> getAhProductsFrom(ReadContext readContext) {
-        TypeRef<List<AhProduct>> typeRef = new TypeRef<List<AhProduct>>() {};
+        List<AhProduct> products = readContext
+                .read("$._embedded.lanes[*]._embedded.items[*]._embedded.product", new TypeRef<List<AhProduct>>() {});
+        System.out.println("sdasddas" + products.size());
+        System.out.println(products.toString());
+        // get all elements with an id inside the last _embedded element
+        setImgSrcs(products, readContext);
 
-        List<AhProduct> product = readContext.read("$._embedded.lanes[*]._embedded.items[*]._embedded.product", typeRef);
-        setImgSrcs(product, readContext);
-
-        return product;
+        return products;
     }
 
     private void setImgSrcs(List<AhProduct> products, ReadContext readContext) {
-        TypeRef<List<String>> typeRef = new TypeRef<List<String>>() {};
-
-        List<String> imgSrcs = readContext.read("$._embedded.lanes[*]._embedded.items[*]._embedded.product.images[2].link.href", typeRef);
-
         for (int i = 0; i < products.size(); i++) {
-            products.get(i).setImageSrc(imgSrcs.get(i));
+            // I am doing this for each product instead of getting all hrefs in 1 search, because some products from ah dont have images
+            // Now I'm getting the img src for each product with the product id
+            List<String> imgSrcs = readContext
+                    .read("$._embedded.lanes[?(@.type == 'ProductLane')]._embedded.items[?(@.resourceType == 'Product')]._embedded.product[?(@.id == '" + products.get(i).getProductSrc() + "')].images[2].link.href", new TypeRef<List<String>>() {});
+            if (imgSrcs.isEmpty()) {
+                return;
+            }
+            String imgSrc = imgSrcs.get(0);
+
+            System.out.println(products.get(i).getProductSrc());
+            products.get(i).setImageSrc(imgSrc);
+        }
+    }
+
+    private void waitBeforeSendingRequest() {
+        try {
+            Thread.sleep(SLEEP_TIME_BETWEEN_REQUESTS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

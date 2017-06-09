@@ -29,8 +29,7 @@ public class Product {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     private List<ProductVariables> productsVariables = new ArrayList<>();
 
-    protected Product() {
-    }
+    protected Product() {}
 
     public Product(String name, String amount, String brand, Category category, List<ProductVariables> productsVariables) {
         this.name = name;
@@ -38,13 +37,6 @@ public class Product {
         this.brand = brand;
         this.category = category;
         this.productsVariables = productsVariables;
-    }
-
-    public Product(String name, String amount, String brand, Category category) {
-        this.name = name;
-        this.amount = amount;
-        this.brand = brand;
-        this.category = category;
     }
 
     @Override
@@ -61,6 +53,10 @@ public class Product {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

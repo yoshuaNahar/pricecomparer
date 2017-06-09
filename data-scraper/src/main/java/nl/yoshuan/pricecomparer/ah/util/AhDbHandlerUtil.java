@@ -4,6 +4,7 @@ import nl.yoshuan.pricecomparer.ah.entities.AhProduct;
 import nl.yoshuan.pricecomparer.entities.Category;
 import nl.yoshuan.pricecomparer.entities.Product;
 import nl.yoshuan.pricecomparer.entities.ProductVariables;
+import nl.yoshuan.pricecomparer.util.DbEntitiesHolder;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,13 +41,15 @@ public class AhDbHandlerUtil {
                         , ahProduct.getDiscountImageSrc()
                         , AH
                         , ahProduct.getPropertyIcons().toString()
-                        , new Date());
+                        , new Date()
+                        , null);
 
         Product product =
                 new Product(ahProduct.getName()
                         , ahProduct.getUnitSize()
                         , ahProduct.getBrandName()
-                        , category); // dont add the productVariable,
+                        , category
+                        , null); // dont add the productVariable,
         // You will get a TransientPropertyValueException, because you are trying to
         // persist an object that has a reference to a transient object (productVariable)
 
@@ -76,44 +79,6 @@ public class AhDbHandlerUtil {
         }
 
         return linkedCategories;
-    }
-
-    public static class DbEntitiesHolder {
-
-        private Category category;
-        private Product product;
-        private ProductVariables productVariables;
-
-        public DbEntitiesHolder(Category category, Product product, ProductVariables productVariables) {
-            this.category = category;
-            this.product = product;
-            this.productVariables = productVariables;
-        }
-
-        public Category getCategory() {
-            return category;
-        }
-
-        public void setCategory(Category category) {
-            this.category = category;
-        }
-
-        public Product getProduct() {
-            return product;
-        }
-
-        public void setProduct(Product product) {
-            this.product = product;
-        }
-
-        public ProductVariables getProductVariables() {
-            return productVariables;
-        }
-
-        public void setProductVariables(ProductVariables productVariables) {
-            this.productVariables = productVariables;
-        }
-
     }
 
 }

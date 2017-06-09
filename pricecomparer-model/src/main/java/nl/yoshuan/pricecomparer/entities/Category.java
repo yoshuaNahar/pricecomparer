@@ -28,12 +28,15 @@ public class Category implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentCategory")
     private List<Category> childCategories = new ArrayList<>();
 
-    protected Category() {
-    }
+    protected Category() {}
 
     public Category(String name, Category parentCategory) {
         this.name = name;
         this.parentCategory = parentCategory;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getId() {

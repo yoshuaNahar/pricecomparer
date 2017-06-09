@@ -2,6 +2,7 @@ package nl.yoshuan.pricecomparer.ah.dbhandler;
 
 import nl.yoshuan.pricecomparer.ah.entities.AhProduct;
 import nl.yoshuan.pricecomparer.ah.util.AhDbHandlerUtil;
+import nl.yoshuan.pricecomparer.util.DbEntitiesHolder;
 import nl.yoshuan.pricecomparer.daos.CategoryDao;
 import nl.yoshuan.pricecomparer.daos.ProductDao;
 import nl.yoshuan.pricecomparer.daos.ProductVariablesDao;
@@ -33,8 +34,8 @@ public class AhDbHandler {
 
     // not tested
     public void persistEntitiesToDb(List<AhProduct> ahProducts) {
-        List<AhDbHandlerUtil.DbEntitiesHolder> dbEntitiesHolderList = toDbEntityHolderList(ahProducts);
-        HashMap<Integer, Category> allCategories = persistAllCategoriesAndSortProductToCategoryFrom(dbEntitiesHolderList);
+        List<DbEntitiesHolder> dbEntitiesHolderList = toDbEntityHolderList(ahProducts);
+        HashMap<Integer, Category> allCategories = persistAllCategoriesAndSortProductToCategory(dbEntitiesHolderList);
 
         for (int i = 0; i < dbEntitiesHolderList.size(); i++) {
             Product product = dbEntitiesHolderList.get(i).getProduct();
@@ -48,12 +49,13 @@ public class AhDbHandler {
             productVariables.setProduct(managedProduct);
 
             productVariablesDao.persist(productVariables);
+            System.out.println(productVariables); // test
         }
     }
 
     // not tested
-    // terrible method
-    HashMap<Integer, Category> persistAllCategoriesAndSortProductToCategoryFrom(List<AhDbHandlerUtil.DbEntitiesHolder> dbEntitiesHolderList) {
+    // method takes too long to understand
+    HashMap<Integer, Category> persistAllCategoriesAndSortProductToCategory(List<DbEntitiesHolder> dbEntitiesHolderList) {
         HashMap<Integer, Category> categoryHashMap = new HashMap<>();
         List<String> uniqueFullCategoryNames = new ArrayList<>();
 
@@ -64,8 +66,8 @@ public class AhDbHandler {
 
                 List<Category> splitCategories = AhDbHandlerUtil.splitFullCategory(fullCategoryName); // split the fullCategory
                 // aardappel-groente-fruit/groente/... into seperate categories
-                categoryHashMap.put(i, splitCategories.get(splitCategories.size() - 1)); // add the last split category (where the
-                // products are, to the hashMap
+                categoryHashMap.put(i, splitCategories.get(splitCategories.size() - 1)); // add the last split category (category where
+                // the ah products in, to the hashMap
                 persistSplitCategories(splitCategories); // persist to db
             } else { // if currentCategoryName already exist
                 categoryHashMap.put(i, categoryHashMap.get(i - 1)); // take category from last category in map and add
@@ -93,8 +95,8 @@ public class AhDbHandler {
         return categoryDao;
     }
 
-    private List<AhDbHandlerUtil.DbEntitiesHolder> toDbEntityHolderList(List<AhProduct> ahProducts) {
-        List<AhDbHandlerUtil.DbEntitiesHolder> dbEntitiesHolderList = new ArrayList<>();
+    private List<DbEntitiesHolder> toDbEntityHolderList(List<AhProduct> ahProducts) {
+        List<DbEntitiesHolder> dbEntitiesHolderList = new ArrayList<>();
         for (AhProduct ahProduct : ahProducts) {
             dbEntitiesHolderList.add(AhDbHandlerUtil.mapToDbEntities(ahProduct));
         }

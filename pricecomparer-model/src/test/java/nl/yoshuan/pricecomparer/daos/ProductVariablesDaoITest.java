@@ -39,7 +39,7 @@ public class ProductVariablesDaoITest {
     @Test
     public void addProductVariablesToProduct() {
         ProductVariables productVariables =
-                new ProductVariables("src", "imgSrc", 100, 0, null, null, AH, "productIcon", new Date());
+                new ProductVariables("src", null, 100, 0, null, null, AH, "productIcon", new Date(), null);
         Product product = productDao.findById(1L);
         productVariables.setProduct(product);
 
@@ -53,13 +53,14 @@ public class ProductVariablesDaoITest {
         assertThat(managedProductVariables.getProduct().getName(), is("tomaat"));
     }
 
+
     private void loadProductAndCategory() {
         Category parentCategory = createParentCategory();
         Category childCategory = createFirstChildCategory(parentCategory);
-        parentCategory.getChildCategories().add(childCategory);
-        Product product = new Product("tomaat", "500g", "AH", childCategory);
+        Product product = new Product("tomaat", "500g", "AH", childCategory, null);
 
         categoryDao.persist(parentCategory);
+        categoryDao.persist(childCategory);
         productDao.persist(product);
     }
 
