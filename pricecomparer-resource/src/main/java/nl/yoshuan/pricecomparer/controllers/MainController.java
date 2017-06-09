@@ -8,13 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("")
 public class MainController {
-    
-    @GetMapping
-    @ResponseBody
-    public void doSomething() {
-//        Application.dbLogic(EntityManagerFactory.createEntityManager());
-    }
-    
+
     @GetMapping("/hello")
     @ResponseBody
     public String doSomethingElse() {

@@ -35,6 +35,8 @@ public class ProductDaoITest {
         Category managedCategory = categoryDao.findById(2L);
         Product product = new Product("tomaat", "500g", "AH", managedCategory, null);
 
+        productDao.clearPersistenceContext();
+
         Product managedProduct = productDao.persist(product);
 
         assertThat(productDao.getCount(), is(1L));
@@ -49,6 +51,8 @@ public class ProductDaoITest {
         Product product = new Product("tomaat", "500g", "AH", managedCategory, null);
 
         productDao.persist(product);
+
+        productDao.clearPersistenceContext();
 
         assertThat(productDao.getCount(), is(1L));
 
@@ -65,6 +69,8 @@ public class ProductDaoITest {
 
         categoryDao.persist(parentCategory);
         categoryDao.persist(childCategory);
+
+        categoryDao.clearPersistenceContext();
     }
 
 }

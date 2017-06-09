@@ -14,8 +14,7 @@ public class JumboProduct {
     // Jumbo doesnt have product icons
 
 
-    public JumboProduct() {
-    }
+    public JumboProduct() {}
 
     public JumboProduct(String name, String productSrc, String brandName, String imgUrl, String unitSize, int price, int bonusPrice, String bonusType, String bonusImg) {
         this.name = name;

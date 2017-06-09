@@ -8,4 +8,5 @@ import org.springframework.context.annotation.Import;
 @ComponentScan(basePackages = {"nl.yoshuan.pricecomparer.ah", "nl.yoshuan.pricecomparer.jumbo"})
 @Import(TestDbConfig.class)
 public class TestAppConfig {
+
 }

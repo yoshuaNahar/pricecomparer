@@ -21,7 +21,7 @@ import static org.hamcrest.core.IsNull.nullValue;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) // Link below for why I need this...
 // https://www.petrikainulainen.net/programming/spring-framework/spring-from-the-trenches-resetting-auto-increment-columns-before-each-test-method/
 public class CategoryDaoITest {
-    // I didnt use TDD when developing this part. because these arent
+    // I didnt use TDD when developing this part. because these aren't
     // even unit tests since I include the db.
 
     // I only added tests for the methods I will definitely use.
@@ -35,6 +35,7 @@ public class CategoryDaoITest {
         categoryDao.persist(category);
 
         categoryDao.clearPersistenceContext();
+
         Category managedCategory = categoryDao.findReferenceById(1L);
 
         assertThat(categoryDao.getCount(), is(1L));
@@ -56,6 +57,7 @@ public class CategoryDaoITest {
         categoryDao.persist(childCategory);
 
         categoryDao.clearPersistenceContext();
+
         Category category = categoryDao.findReferenceById(2L);
 
         assertThat(categoryDao.getCount(), is(2L));
@@ -65,13 +67,14 @@ public class CategoryDaoITest {
     }
 
     @Test
-    public void addTwoCategoriesPersistParentAndFindBoth() {
+    public void addTwoCategoriesPersistParentAndFindOnlyParent() {
         Category parentCategory = createParentCategory();
-        parentCategory.getChildCategories().add(new Category(GROENTE, parentCategory)); // CascadeType.ALL
+        parentCategory.getChildCategories().add(new Category(GROENTE, parentCategory)); // CascadeType.NONE
 
         categoryDao.persist(parentCategory);
 
         categoryDao.clearPersistenceContext();
+
         Category category = categoryDao.findReferenceById(1L);
 
         assertThat(categoryDao.getCount(), is(1L));
@@ -159,7 +162,7 @@ public class CategoryDaoITest {
     }
 
     @Test
-    public void add3LevelsOfRelatedCategoriesPersistParent() {
+    public void add3LevelsOfRelatedCategoriesPersistAllManually() {
         Category parentCategory = createParentCategory();
         Category childCategory = createFirstChildCategory(null);
         Category grandChildCategory = new Category("tomaat", null);

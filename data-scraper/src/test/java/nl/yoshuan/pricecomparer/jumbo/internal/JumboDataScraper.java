@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 // TODO: Write Readme with every spec
 // TODO: FINISH THIS AND WRITE REAL ALGORITHM
 
-public class JumboDataParser {
+public class JumboDataScraper {
 
     private static final String CATEGORY = "Aardappel, rijst, pasta";
     private static final String[] SUB_CATEGORY = {"Ongeschilde aardapelen", "Geschilde aardapelen", "Aardappelpuree",
@@ -33,7 +33,7 @@ public class JumboDataParser {
     private final String htmlFileLocation;
 
 
-    public JumboDataParser(String htmlFileLocation) {
+    public JumboDataScraper(String htmlFileLocation) {
         this.htmlFileLocation = htmlFileLocation;
     }
 
@@ -98,7 +98,7 @@ public class JumboDataParser {
             e.printStackTrace();
         }
         int bonusPrice = 0;
-        if(number != null) {
+        if (number != null) {
             bonusPrice = (int) (number.doubleValue() * 100);
         }
 

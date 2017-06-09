@@ -38,7 +38,7 @@ public class JumboDbHandler {
 
         addCategoryToProducts(dbEntitiesHolderList);
 
-        for(DbEntitiesHolder dbEntitiesHolder : dbEntitiesHolderList) {
+        for (DbEntitiesHolder dbEntitiesHolder : dbEntitiesHolderList) {
             Product product = dbEntitiesHolder.getProduct();
             ProductVariables productVariables = dbEntitiesHolder.getProductVariables();
             productVariables.setProduct(product);
@@ -49,10 +49,19 @@ public class JumboDbHandler {
     }
 
     private void addCategoryToProducts(List<DbEntitiesHolder> dbEntitiesHolderList) {
-        luceneHelper.addDbDataIntoLuceneIndexes(productDao.getAllProductNamesAndCategoryId());
+        luceneHelper.addDbDataIntoLuceneIndexes(productDao.getAllProductNamesAndCategoryId()); // TODO: Write this class method
 
-        dbEntitiesHolderList.forEach(dbEntitiesHolder ->
-                luceneHelper.checkClosestMatchFromIndex(dbEntitiesHolder.getProduct()));
+        dbEntitiesHolderList.forEach(dbEntitiesHolder -> {
+            luceneHelper.checkClosestMatchFromIndex(dbEntitiesHolder.getProduct());
+
+            // something like this
+            Product product = dbEntitiesHolder.getProduct();
+            productDao.persistIfNotExist(product);
+
+            ProductVariables productVariables = dbEntitiesHolder.getProductVariables();
+            productVariables.setProduct(product);
+            productVariablesDao.persist(productVariables);
+        });
     }
 
     private List<DbEntitiesHolder> toDbEntityHolderList(List<JumboProduct> jumboProducts) {

@@ -44,18 +44,18 @@ public class App {
     public static void main(String[] args) {
         ctx = new AnnotationConfigApplicationContext(AppConfig.class);
         getAhData();
+//        getJumboData();
     }
 
     private static void getAhData() {
         AhDataScraper ahDataScraper = ctx.getBean(AhDataScraper.class);
         AhDbHandler dbHandler = ctx.getBean(AhDbHandler.class);
 
-        // I already did 0 en 1
-        for (int i = 0; i < 1; i++) {
-            List<AhProduct> ahProducts = ahDataScraper.getAllAhProductsFrom("/producten/huishouden-huisdier"); // /producten/koken-tafelen-non-food
+        // already did 0, 1, and last 2
+        for (int i = 0; i < 1; i++) { // still testing
+            List<AhProduct> ahProducts = ahDataScraper.getAllAhProductsFrom("/producten/huishouden-huisdier");
             // If product already exists don't persist, same for categories. ProductVariables will persist each time!
             dbHandler.persistEntitiesToDb(ahProducts);
-            System.out.println(MAIN_AH_CATEGORIES.get(i));
         }
     }
 

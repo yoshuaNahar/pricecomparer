@@ -45,6 +45,8 @@ public class ProductVariablesDaoITest {
 
         productVariablesDao.persist(productVariables);
 
+        productVariablesDao.clearPersistenceContext();
+
         assertThat(productVariablesDao.getCount(), is(1L));
 
         ProductVariables managedProductVariables = productVariablesDao.findById(1L);
@@ -62,6 +64,9 @@ public class ProductVariablesDaoITest {
         categoryDao.persist(parentCategory);
         categoryDao.persist(childCategory);
         productDao.persist(product);
+
+        categoryDao.clearPersistenceContext();
+        productDao.clearPersistenceContext();
     }
 
 }

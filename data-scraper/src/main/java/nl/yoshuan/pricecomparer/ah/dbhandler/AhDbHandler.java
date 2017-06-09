@@ -2,13 +2,13 @@ package nl.yoshuan.pricecomparer.ah.dbhandler;
 
 import nl.yoshuan.pricecomparer.ah.entities.AhProduct;
 import nl.yoshuan.pricecomparer.ah.util.AhDbHandlerUtil;
-import nl.yoshuan.pricecomparer.util.DbEntitiesHolder;
 import nl.yoshuan.pricecomparer.daos.CategoryDao;
 import nl.yoshuan.pricecomparer.daos.ProductDao;
 import nl.yoshuan.pricecomparer.daos.ProductVariablesDao;
 import nl.yoshuan.pricecomparer.entities.Category;
 import nl.yoshuan.pricecomparer.entities.Product;
 import nl.yoshuan.pricecomparer.entities.ProductVariables;
+import nl.yoshuan.pricecomparer.util.DbEntitiesHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +49,6 @@ public class AhDbHandler {
             productVariables.setProduct(managedProduct);
 
             productVariablesDao.persist(productVariables);
-            System.out.println(productVariables); // test
         }
     }
 
@@ -61,7 +60,7 @@ public class AhDbHandler {
 
         for (int i = 0; i < dbEntitiesHolderList.size(); i++) {
             String fullCategoryName = dbEntitiesHolderList.get(i).getCategory().getName();
-            if(!uniqueFullCategoryNames.contains(fullCategoryName)) { // if (list doesn't contain currentCategoryName)
+            if (!uniqueFullCategoryNames.contains(fullCategoryName)) { // if (list doesn't contain currentCategoryName)
                 uniqueFullCategoryNames.add(fullCategoryName); // add currentCategoryName
 
                 List<Category> splitCategories = AhDbHandlerUtil.splitFullCategory(fullCategoryName); // split the fullCategory
