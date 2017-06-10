@@ -1,6 +1,5 @@
 package nl.yoshuan.pricecomparer.ah.dbhandler;
 
-import nl.yoshuan.pricecomparer.ah.util.AhDbHandlerUtil;
 import nl.yoshuan.pricecomparer.config.TestAppConfig;
 import nl.yoshuan.pricecomparer.daos.CategoryDao;
 import nl.yoshuan.pricecomparer.entities.Category;
@@ -27,7 +26,7 @@ public class AhDbHandlerUTest {
 
     @Test
     public void splitAllCategory() {
-        List<Category> splitCategories = AhDbHandlerUtil
+        List<Category> splitCategories = ahDbHandler
                 .splitFullCategory("/producten/aardappel-groente-fruit/groente/tomaat-paprika-mais/tomaten/trostomaten");
 
         Category firstCategory = splitCategories.get(0);
@@ -41,7 +40,7 @@ public class AhDbHandlerUTest {
 
     @Test
     public void splitCategoryOneLevel() {
-        List<Category> splitCategories = AhDbHandlerUtil
+        List<Category> splitCategories = ahDbHandler
                 .splitFullCategory("/producten/aardappel-groente-fruit");
 
         Category firstCategory = splitCategories.get(0);
@@ -55,7 +54,7 @@ public class AhDbHandlerUTest {
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void persistSplitCategories() {
-        List<Category> splitCategories = AhDbHandlerUtil
+        List<Category> splitCategories = ahDbHandler
                 .splitFullCategory("/producten/aardappel-groente-fruit/groente/tomaat-paprika-mais/tomaten/trostomaten");
 
         ahDbHandler.persistSplitCategories(splitCategories);
@@ -75,12 +74,12 @@ public class AhDbHandlerUTest {
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void persistSplitCategoriesFromDifferentUrl() {
-        List<Category> splitCategories = AhDbHandlerUtil
+        List<Category> splitCategories = ahDbHandler
                 .splitFullCategory("/producten/aardappel-groente-fruit/groente/tomaat-paprika-mais/tomaten/trostomaten");
 
         ahDbHandler.persistSplitCategories(splitCategories);
 
-        List<Category> splitCategories2 = AhDbHandlerUtil
+        List<Category> splitCategories2 = ahDbHandler
                 .splitFullCategory("/producten/aardappel-groente-fruit/groente/tomaat-paprika-mais/paprika/rode-paprika");
 
         ahDbHandler.persistSplitCategories(splitCategories2);

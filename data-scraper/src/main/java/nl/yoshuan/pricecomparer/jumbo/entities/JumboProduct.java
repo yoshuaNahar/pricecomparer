@@ -13,7 +13,6 @@ public class JumboProduct {
     private String bonusImg;
     // Jumbo doesnt have product icons
 
-
     public JumboProduct() {}
 
     public JumboProduct(String name, String productSrc, String brandName, String imgUrl, String unitSize, int price, int bonusPrice, String bonusType, String bonusImg) {

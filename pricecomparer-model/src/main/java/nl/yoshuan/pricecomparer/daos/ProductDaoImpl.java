@@ -1,6 +1,7 @@
 package nl.yoshuan.pricecomparer.daos;
 
 import nl.yoshuan.pricecomparer.entities.Product;
+import nl.yoshuan.pricecomparer.entities.SimpleProduct;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,11 +25,10 @@ public class ProductDaoImpl extends GenericDaoImpl<Product, Long> implements Pro
     }
 
     @Override
-    public List<Product> getAllProductNamesAndCategoryId() {
-        em.createQuery("SELECT e.name, e.category FROM " + entityClass.getSimpleName() + " e ORDER BY e.", entityClass)
+    public List<SimpleProduct> getAllProductNamesAndCategoryId() {
+        return em
+                .createQuery("SELECT NEW nl.yoshuan.pricecomparer.entities.SimpleProduct(p.name, c.id) FROM Product p, Category c WHERE c.id = p.category.id", SimpleProduct.class)
                 .getResultList();
-
-        return null;
     }
 
 }

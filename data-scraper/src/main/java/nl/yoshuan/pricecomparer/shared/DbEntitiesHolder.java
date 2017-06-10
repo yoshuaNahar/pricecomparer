@@ -1,4 +1,4 @@
-package nl.yoshuan.pricecomparer.util;
+package nl.yoshuan.pricecomparer.shared;
 
 import nl.yoshuan.pricecomparer.entities.Category;
 import nl.yoshuan.pricecomparer.entities.Product;

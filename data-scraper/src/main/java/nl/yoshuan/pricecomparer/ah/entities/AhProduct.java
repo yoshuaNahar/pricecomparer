@@ -12,7 +12,7 @@ public class AhProduct {
     private String brandName;
     private String imageSrc; // set manually
     private String unitSize;
-    private Discount discount = new Discount(); //only the label, not the type name (ah has BONUS for all almost all their labels (route 99, 2 for 0.99, Bonus) Only a few have ONLINE_BONUS.
+    private Discount discount = new Discount(); //only the label, not the type name (ah has BONUS for almost all their labels (route 99, 2 for 0.99, Bonus) Only a few have ONLINE_BONUS.
     private String discountImageSrc; // not shown in json page for example the 2 VOOR 0.99 image .. Need to add this as last
     private List<String> propertyIcons = new ArrayList<>();
     private String categoryName;

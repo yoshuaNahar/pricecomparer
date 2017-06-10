@@ -38,10 +38,7 @@ public class JumboDataScraper {
     }
 
     private boolean pageEmpty(Elements dl_s) {
-        if (dl_s.isEmpty()) {
-            return true;
-        }
-        return false;
+        return dl_s.isEmpty();
     }
 
     private String getAnchorHrefValue(Element anchor) {
@@ -106,10 +103,7 @@ public class JumboDataScraper {
     }
 
     private boolean productHasBonus(Element badgeImg) {
-        if (badgeImg == null) {
-            return false;
-        }
-        return true;
+        return badgeImg != null;
     }
 
     public Element getFirstProductRaw(Elements products) {
@@ -120,9 +114,7 @@ public class JumboDataScraper {
         List<JumboProduct> jumboProducts = new ArrayList<>();
 
         int amountOfProductsOnPage = products.size();
-        for (int i = 0; i < amountOfProductsOnPage; i++) {
-            Element product = products.get(i);
-
+        for (Element product : products) {
             Element anchor = getAnchor(product);
             String anchorHrefText = getAnchorHrefValue(anchor);
             String anchorText = anchor.text();
@@ -172,14 +164,13 @@ public class JumboDataScraper {
         }
     }
 
-
     public void runScraper() {
         boolean hasNextNumberPage;
 
-        for (int subCatIndex = 0; subCatIndex < SUB_CATEGORY.length; subCatIndex++) {
+        for (String subCategory : SUB_CATEGORY) {
             hasNextNumberPage = true;
             for (int numberPage = 0; hasNextNumberPage; numberPage++) {
-                Elements products = getPage(SUB_CATEGORY[subCatIndex], numberPage);
+                Elements products = getPage(subCategory, numberPage);
 
                 if (pageEmpty(products)) {
                     hasNextNumberPage = false;

@@ -1,11 +1,13 @@
 package nl.yoshuan.pricecomparer.jumbo.scraper;
 
 import nl.yoshuan.pricecomparer.jumbo.entities.JumboProduct;
+import nl.yoshuan.pricecomparer.shared.DataScraper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -17,25 +19,41 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static nl.yoshuan.pricecomparer.App.SLEEP_TIME_BETWEEN_REQUESTS;
+
 @Component
-public class JumboDataScraper {
+public class JumboDataScraper extends DataScraper<JumboProduct> {
 
-    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(JumboDataScraper.class);
+    private static final Logger logger = LoggerFactory.getLogger(JumboDataScraper.class);
+    public static int ALL_PAGES = 10_000;
 
-    public List<JumboProduct> scrapePages(int amountOfPagesToScrape) {
+    @Override
+    public List<JumboProduct> getAllProducts() {
+        return getJumboProductsFrom(ALL_PAGES);
+    }
+
+    /**
+     * Jumbo doesn't have the same category structure. Pages are numbered and there are
+     * 12 products on each page.
+     *
+     * @param amountOfPagesToScrape amount of pages to scrape
+     * @return list of scraped <code>JumboProduct</code>s
+     */
+    public List<JumboProduct> getJumboProductsFrom(int amountOfPagesToScrape) {
         List<JumboProduct> jumboProducts = new ArrayList<>();
         for (int pageNumber = 0; pageNumber < amountOfPagesToScrape; pageNumber++) {
             Elements products = getProductsOnPage(pageNumber);
-            logger.debug("Amount of products: " + products.size());
-            logger.debug(products.toString());
+            logger.info("Amount of products: " + products.size());
+            logger.info(products.toString());
 
             if (products.isEmpty()) {
                 break;
             }
 
             jumboProducts.addAll(getProductData(products));
-            logger.debug("jumboProducts size: " + jumboProducts.size());
-            logger.debug("=== OTHER PAGE ===");
+            logger.info("jumboProducts size: " + jumboProducts.size());
+            logger.info("=== OTHER PAGE ===");
+            waitBetweenRequests(SLEEP_TIME_BETWEEN_REQUESTS);
         }
 
         return jumboProducts;

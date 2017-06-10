@@ -22,7 +22,7 @@ public class JumboDataScraperITest {
 
     @Test
     public void scrapeFirstJumboPage() {
-        List<JumboProduct> jumboProducts = jumboDataScraper.scrapePages(1);
+        List<JumboProduct> jumboProducts = jumboDataScraper.getJumboProductsFrom(1);
 
         assertThat(jumboProducts.size(), is(not(0)));
     }

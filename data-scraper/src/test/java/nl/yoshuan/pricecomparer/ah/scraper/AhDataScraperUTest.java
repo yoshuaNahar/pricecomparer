@@ -23,7 +23,7 @@ public class AhDataScraperUTest {
 
     @Test
     public void getAhProductsFromDeepestSubCategory() {
-        List<AhProduct> ahProducts = ahDataScraper.getAllAhProductsFrom("/producten/aardappel-groente-fruit/groente/tomaat-paprika-mais/tomaten/trostomaten");
+        List<AhProduct> ahProducts = ahDataScraper.getAhProductsFrom("/producten/aardappel-groente-fruit/groente/tomaat-paprika-mais/tomaten/trostomaten");
 
         AhProduct firstProduct = ahProducts.get(0);
 
@@ -33,7 +33,7 @@ public class AhDataScraperUTest {
 
     @Test
     public void getAhProductsFromSecondDeepestSubCategory() {
-        List<AhProduct> ahProducts = ahDataScraper.getAllAhProductsFrom("/producten/aardappel-groente-fruit/groente/tomaat-paprika-mais/tomaten");
+        List<AhProduct> ahProducts = ahDataScraper.getAhProductsFrom("/producten/aardappel-groente-fruit/groente/tomaat-paprika-mais/tomaten");
 
         AhProduct firstProduct = ahProducts.get(0);
 
@@ -44,7 +44,7 @@ public class AhDataScraperUTest {
     @Test
     // some products apparently don't have images
     public void getAhProductsWithImgSrcsAndAddNullIfNoImgAvailable() {
-        List<AhProduct> ahProducts = ahDataScraper.getAllAhProductsFrom("/producten/koken-tafelen-non-food/koken-wonen/bewaardozen-lunchtrommel/bidon");
+        List<AhProduct> ahProducts = ahDataScraper.getAhProductsFrom("/producten/koken-tafelen-non-food/koken-wonen/bewaardozen-lunchtrommel/bidon");
         String productWithImgSrc = ahProducts.get(0).getImageSrc();
         String productWithoutImgSrc = ahProducts.get(2).getImageSrc();
 
