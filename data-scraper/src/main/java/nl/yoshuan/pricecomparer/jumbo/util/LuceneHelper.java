@@ -44,7 +44,7 @@ public abstract class LuceneHelper {
         createSearcher();
 
         Document doc = getSearchResult(product.getName());
-        logger.ifn("Jumbo Product: " + product.getName() + " matched with:" + doc.get("product_name"));
+        logger.info("Jumbo Product: " + product.getName() + " matched with:" + doc.get("product_name"));
 
         Category category = new Category(null, null);
         category.setId(Long.parseLong(doc.get("category_id")));
@@ -58,7 +58,7 @@ public abstract class LuceneHelper {
             Document doc = new Document();
             doc.add(new TextField("product_name", products.get(i).getName(), Field.Store.YES));
             doc.add(new StringField("category_id", "" + products.get(i).getCategoryId(), Field.Store.YES));
-            logger.debug("#: " + i + " " + products.get(i).getName());
+            logger.info("#: " + i + " " + products.get(i).getName());
             try {
                 writer.addDocument(doc);
                 writer.commit();
@@ -88,10 +88,10 @@ public abstract class LuceneHelper {
 
             TopDocs hits = searcher.search(q, 10);
 
-            logger.debug(hits.totalHits + " docs found for the query \"" + q.toString() + "\"");
+            logger.info(hits.totalHits + " docs found for the query \"" + q.toString() + "\"");
 
             doc = searcher.doc(hits.scoreDocs[0].doc);
-            logger.debug(doc.get("product_name") + " " + doc.get("category_id"));
+            logger.info(doc.get("product_name") + " " + doc.get("category_id"));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }

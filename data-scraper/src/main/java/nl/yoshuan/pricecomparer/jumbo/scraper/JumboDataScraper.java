@@ -107,7 +107,7 @@ public class JumboDataScraper extends DataScraper<JumboProduct> {
 
             jumboProduct.setBonusPrice(getBonusPrice(product));
 
-            logger.debug(jumboProduct.toString());
+            logger.info(jumboProduct.toString());
             jumboProducts.add(jumboProduct);
         }
 

@@ -85,6 +85,21 @@ public class ProductDaoITest {
         assertThat(products.get(1).getCategoryId(), is(2L));
     }
 
+    @Test
+    public void finByCategoryName() {
+        Category managedCategory = categoryDao.findById(2L);
+        Product product = new Product("tomaat", "500g", "AH", managedCategory, null);
+
+        productDao.persist(product);
+
+        productDao.clearPersistenceContext();
+
+        List<Product> products = productDao.findByCategoryName(GROENTE, 0);
+
+        assertThat(products.get(0).getName(), is("tomaat"));
+        assertThat(products.get(0).getCategory().getName(), is(GROENTE));
+    }
+
     private void loadCategories() {
         Category parentCategory = createParentCategory();
         Category childCategory = createFirstChildCategory(parentCategory);

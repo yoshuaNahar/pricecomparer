@@ -121,13 +121,12 @@ public class AhDataScraper extends DataScraper<AhProduct> {
             // Now I'm getting the img src for each product with the product id
             List<String> imgSrcs = readContext
                     .read("$._embedded.lanes[?(@.type == 'ProductLane')]._embedded.items[?(@.resourceType == 'Product')]._embedded.product[?(@.id == '" + product.getProductSrc() + "')].images[2].link.href", new TypeRef<List<String>>() {});
+
             if (imgSrcs.isEmpty()) {
                 return;
             }
-            String imgSrc = imgSrcs.get(0);
 
-            logger.info(product.getProductSrc());
-            product.setImageSrc(imgSrc);
+            product.setImageSrc(imgSrcs.get(0));
         }
     }
 

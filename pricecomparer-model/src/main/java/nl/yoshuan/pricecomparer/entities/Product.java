@@ -1,11 +1,15 @@
 package nl.yoshuan.pricecomparer.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "product")
+@JsonIgnoreProperties({"category"}) // https://stackoverflow.com/questions/24994440/no-serializer-found-for-class-org-hibernate-proxy-pojo-javassist-javassist
+// I am getting the exception mentioned, and the first answer clears out why
 public class Product {
 
     @Id
@@ -22,7 +26,7 @@ public class Product {
     @Column(name = "brand", nullable = false)
     private String brand;
 
-    @ManyToOne() // no CascadeType.ALL, because I already persist my categories manually
+    @ManyToOne(fetch = FetchType.LAZY) // no CascadeType.ALL, because I already persist my categories manually
     @JoinColumn(name = "category_id", nullable = false, updatable = false)
     private Category category;
 

@@ -1,13 +1,15 @@
 package nl.yoshuan.pricecomparer.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "category")
-public class Category implements Serializable {
+@JsonIgnoreProperties({"parentCategory", "childCategories"})
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +19,7 @@ public class Category implements Serializable {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @ManyToOne // Default is CascadeType.NONE
+    @ManyToOne(fetch = FetchType.LAZY) // Default is CascadeType.NONE
     @JoinColumn(name = "parent_category_id", referencedColumnName = "category_id")
     private Category parentCategory;
 
@@ -25,7 +27,7 @@ public class Category implements Serializable {
     // urls with the same parent/root category and different child/subcategories
     // When using my persistIfNotExist on the parent (that already exists) I wont be able to
     // persist the children. So I will do this manually.
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentCategory")
+    @OneToMany(mappedBy = "parentCategory")
     private List<Category> childCategories = new ArrayList<>();
 
     protected Category() {}

@@ -35,7 +35,8 @@ public abstract class GenericDaoImpl<E, ID> implements GenericDao<E, ID> {
     public E findByUniquePropertyValue(String column, String columnValue) {
         try {
             return em
-                    .createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e WHERE e." + column + " = :columnValue", entityClass)
+                    .createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e"
+                            + " WHERE e." + column + " = :columnValue", entityClass)
                     .setParameter("columnValue", columnValue)
                     .getSingleResult();
         } catch (NoResultException e) {
@@ -46,7 +47,8 @@ public abstract class GenericDaoImpl<E, ID> implements GenericDao<E, ID> {
     @Override
     public List<E> findByPropertyValue(String column, String columnValue) {
         return em
-                .createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e WHERE e." + column + " = :columnValue", entityClass)
+                .createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e"
+                        + " WHERE e." + column + " = :columnValue", entityClass)
                 .setParameter("columnValue", columnValue)
                 .getResultList();
     }
@@ -54,11 +56,13 @@ public abstract class GenericDaoImpl<E, ID> implements GenericDao<E, ID> {
     @Override
     public List<E> findAll(String orderColumn) {
         return em
-                .createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e ORDER BY e." + orderColumn, entityClass)
+                .createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e"
+                        + " ORDER BY e." + orderColumn, entityClass)
                 .getResultList();
     }
 
     @Override
+    // testing out criteriaBuilder
     public Long getCount() {
         CriteriaQuery<Long> c = em.getCriteriaBuilder().createQuery(Long.class);
         c.select(em.getCriteriaBuilder().count(c.from(entityClass)));
@@ -68,7 +72,7 @@ public abstract class GenericDaoImpl<E, ID> implements GenericDao<E, ID> {
     @Override
     public E persist(E entity) {
         em.persist(entity);
-        em.flush(); // Why doesnt Spring transaction automatically add the em.flush inside the transaction? OR why isnt Hibernate AUTO flush active?????????
+        em.flush(); // Why doesn't Spring transaction automatically add the em.flush inside the transaction? Or why isn't Hibernate AUTO flush active?
         return entity;
     }
 
@@ -81,7 +85,8 @@ public abstract class GenericDaoImpl<E, ID> implements GenericDao<E, ID> {
     @Override
     public boolean existsById(ID id) {
         return em
-                .createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e WHERE e.id = :id")
+                .createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e"
+                        + " WHERE e.id = :id")
                 .setParameter("id", id)
                 .getResultList().size() == 1;
     }
@@ -90,7 +95,8 @@ public abstract class GenericDaoImpl<E, ID> implements GenericDao<E, ID> {
     @Override
     public boolean existsByUniquePropertyValue(String column, String columnValue) {
         return em
-                .createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e WHERE e." + column + " = :columnValue")
+                .createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e"
+                        + " WHERE e." + column + " = :columnValue")
                 .setParameter("columnValue", columnValue)
                 .getResultList().size() == 1;
     }

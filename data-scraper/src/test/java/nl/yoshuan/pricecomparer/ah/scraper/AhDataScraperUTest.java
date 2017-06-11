@@ -2,6 +2,7 @@ package nl.yoshuan.pricecomparer.ah.scraper;
 
 import nl.yoshuan.pricecomparer.ah.entities.AhProduct;
 import nl.yoshuan.pricecomparer.config.TestAppConfig;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class AhDataScraperUTest {
         AhProduct firstProduct = ahProducts.get(0);
 
         assertThat(ahProducts.size(), is(4));
-        assertThat(firstProduct.getName(), is("AH Trosto\u00ADma\u00ADten"));
+        assertThat(firstProduct.getName(), is("AH Trostomaten"));
     }
 
     @Test
@@ -38,10 +39,11 @@ public class AhDataScraperUTest {
         AhProduct firstProduct = ahProducts.get(0);
 
         assertThat(ahProducts.size(), is(20));
-        assertThat(firstProduct.getName(), is("AH Trosto\u00ADma\u00ADten"));
+        assertThat(firstProduct.getName(), is("AH Trostomaten"));
     }
 
     @Test
+    @Ignore("They have added an img for that product...")
     // some products apparently don't have images
     public void getAhProductsWithImgSrcsAndAddNullIfNoImgAvailable() {
         List<AhProduct> ahProducts = ahDataScraper.getAhProductsFrom("/producten/koken-tafelen-non-food/koken-wonen/bewaardozen-lunchtrommel/bidon");
