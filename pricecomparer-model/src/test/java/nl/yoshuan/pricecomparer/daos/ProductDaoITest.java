@@ -94,7 +94,7 @@ public class ProductDaoITest {
 
         productDao.clearPersistenceContext();
 
-        List<Product> products = productDao.findByCategoryName(GROENTE, 0);
+        List<Product> products = productDao.findByCategoryId(1L, 0, 12);
 
         assertThat(products.get(0).getName(), is("tomaat"));
         assertThat(products.get(0).getCategory().getName(), is(GROENTE));

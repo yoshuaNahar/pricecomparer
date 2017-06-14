@@ -24,7 +24,7 @@ public class CategoryController {
         return categoryService.getCategoryById(categoryId);
     }
 
-    @GetMapping("")
+    @GetMapping()
     public Category getCategoryByName(@RequestParam("categoryName") String categoryName) {
         if (categoryName == null) {
             return null;

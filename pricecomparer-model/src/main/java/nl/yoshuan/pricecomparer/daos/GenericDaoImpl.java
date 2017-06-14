@@ -106,6 +106,7 @@ public abstract class GenericDaoImpl<E, ID> implements GenericDao<E, ID> {
         em.detach(entity);
     }
 
+    @Override
     public void clearPersistenceContext() {
         em.clear();
     }

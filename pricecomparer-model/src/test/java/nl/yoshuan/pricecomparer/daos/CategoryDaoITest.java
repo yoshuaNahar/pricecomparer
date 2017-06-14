@@ -2,6 +2,7 @@ package nl.yoshuan.pricecomparer.daos;
 
 import nl.yoshuan.pricecomparer.config.TestDbConfig;
 import nl.yoshuan.pricecomparer.entities.Category;
+import org.hibernate.LazyInitializationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
 
 import static nl.yoshuan.pricecomparer.utils.CategoryUtil.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -164,12 +167,8 @@ public class CategoryDaoITest {
     @Test
     public void add3LevelsOfRelatedCategoriesPersistAllManually() {
         Category parentCategory = createParentCategory();
-        Category childCategory = createFirstChildCategory(null);
-        Category grandChildCategory = new Category("tomaat", null);
-
-        // so that the children parent id column is not null
-        childCategory.setParentCategory(parentCategory);
-        grandChildCategory.setParentCategory(childCategory);
+        Category childCategory = createFirstChildCategory(parentCategory);
+        Category grandChildCategory = new Category("tomaat", childCategory);
 
         categoryDao.persist(parentCategory);
         categoryDao.persist(childCategory);
@@ -187,6 +186,27 @@ public class CategoryDaoITest {
 
         assertThat(managedChildCategory.getChildCategories().get(0).getId(), is(grandChildCategory.getId()));
         assertThat(managedChildCategory.getChildCategories().get(0).getName(), is(grandChildCategory.getName()));
+    }
+
+    @Test(expected = LazyInitializationException.class)
+    public void addCategoryFindItDetachItCheckContainsAndGetException() {
+        Category parentCategory = createParentCategory();
+        Category childCategory = createFirstChildCategory(parentCategory);
+
+        categoryDao.persist(parentCategory);
+        categoryDao.persist(childCategory);
+
+        categoryDao.clearPersistenceContext();
+        Category category = categoryDao.findById(1L);
+
+        categoryDao.makeDetached(category);
+
+        EntityManager em = ((GenericDaoImpl) categoryDao).em;
+
+        assertThat(em.contains(category), is(false));
+
+        category.getChildCategories().get(0); // get list of childCategories that should've been
+        // lazy loaded, but
     }
 
 }

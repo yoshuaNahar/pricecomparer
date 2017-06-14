@@ -25,36 +25,42 @@ public class CategoryService {
     }
 
     public Category getCategoryById(Long categoryId) {
-        return categoryDao.findById(categoryId);
+        Category category = categoryDao.findById(categoryId);
+
+        return categoryDao.unproxyOnlyGetFirstChildCategory(category);
     }
 
     public Category getCategoryByName(String categoryName) {
-        return categoryDao.findByUniquePropertyValue("name", categoryName);
+        Category category = categoryDao.findByUniquePropertyValue("name", categoryName);
+
+        return categoryDao.unproxyOnlyGetFirstChildCategory(category);
     }
 
     public List<Product> getProductsByCategoryId(Long categoryId, int pageNumber) {
-        return productDao.findByCategoryId(categoryId, pageNumber * 12);
+        Category category = categoryDao.findById(categoryId);
+
+        return getProductsByCategory(category, pageNumber);
     }
 
     public List<Product> getProductsByCategoryName(String categoryName, int pageNumber) {
-        return productDao.findByCategoryName(categoryName, pageNumber * 12);
+        Category category = categoryDao.findByUniquePropertyValue("name", categoryName);
+
+        return getProductsByCategory(category, pageNumber);
     }
 
-    //    public Map<String, List<Product>> getProductsByCategoryId(Long categoryId, int pageNumber) {
-//        Map<String, List<Product>> products = new HashMap<>();
-//
-//        Category category = categoryDao.findByUniquePropertyValue("name", categoryName);
-//
-//        if (isDeepestSubCategory(category)) {
-//            products.put(categoryName, productDao.findByCategory(category, pageNumber));
-//        } else {
-//            List<Category> deepestChildCategory = getDeepestChildCategory(category);
-//            deepestChildCategory.forEach(cat -> products.put(cat.getName(), productDao
-//                    .findByCategory(cat, pageNumber)));
-//        }
-//
-//        return products;
-//    }
+    private List<Product> getProductsByCategory(Category category, int pageNumber) {
+        List<Category> deepestCategories = getDeepestChildCategory(category);
+        if (deepestCategories.size() == 0) {
+            deepestCategories.add(category);
+        }
+
+        List<Product> products = new ArrayList<>();
+        deepestCategories.stream().limit(12).forEach(deepestCategory ->
+                products.addAll(productDao.findByCategoryId(deepestCategory.getId(), pageNumber
+                        * 12, maxResult(deepestCategories.size()))));
+
+        return products;
+    }
 
     private List<Category> getDeepestChildCategory(Category category) {
         List<Category> childCategories = category.getChildCategories();
@@ -63,11 +69,12 @@ public class CategoryService {
         for (Category childCategory : childCategories) {
             if (isDeepestSubCategory(childCategory)) {
                 deepestChildCategories.add(childCategory);
-                if (deepestChildCategories.size() == 12) {
-                    return deepestChildCategories;
-                }
             } else {
-                deepestChildCategories.addAll(getDeepestChildCategory(category));
+                deepestChildCategories.addAll(getDeepestChildCategory(childCategory));
+            }
+
+            if (deepestChildCategories.size() > 12) {
+                break;
             }
         }
 
@@ -76,6 +83,10 @@ public class CategoryService {
 
     private boolean isDeepestSubCategory(Category category) {
         return category.getChildCategories().size() == 0;
+    }
+
+    private int maxResult(int categorySize) {
+        return (int) Math.ceil(((double) 12 / categorySize));
     }
 
 }

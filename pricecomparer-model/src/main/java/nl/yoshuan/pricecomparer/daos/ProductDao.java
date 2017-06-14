@@ -11,8 +11,6 @@ public interface ProductDao extends GenericDao<Product, Long> {
 
     List<SimpleProduct> getAllProductNamesAndCategoryId();
 
-    List<Product> findByCategoryId(Long categoryId, int startAt);
-
-    List<Product> findByCategoryName(String categoryName, int startAt);
+    List<Product> findByCategoryId(Long categoryId, int startAt, int maxResult);
 
 }

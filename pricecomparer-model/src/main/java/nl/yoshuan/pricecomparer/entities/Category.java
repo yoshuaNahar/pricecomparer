@@ -1,6 +1,8 @@
 package nl.yoshuan.pricecomparer.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -8,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "category")
-@JsonIgnoreProperties({"parentCategory", "childCategories"})
+@JsonIgnoreProperties({"parentCategory"})
 public class Category {
 
     @Id
@@ -67,6 +69,14 @@ public class Category {
 
     public void setChildCategories(List<Category> childCategories) {
         this.childCategories = childCategories;
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 
 }
